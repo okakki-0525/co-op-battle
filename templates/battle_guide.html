@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>協力バトル 戦闘システム説明</title>
+<style>
+body{
+    background:#202830;
+    color:#ffffff;
+    font-family:sans-serif;
+    margin:0;
+    padding:20px;
+}
+.container{
+    max-width:900px;
+    margin:auto;
+}
+h1{
+    text-align:center;
+    color:#ffd700;
+}
+.section{
+    background:rgba(255,255,255,0.08);
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:16px;
+}
+.section h2{
+    margin-top:0;
+    color:#7fd4ff;
+}
+.top-image{
+    text-align:center;
+    margin-bottom:24px;
+}
+.top-image img{
+    width:100%;
+    max-width:700px;
+    border-radius:16px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+}
+.caption{
+    margin-top:10px;
+    color:#ddd;
+    font-size:14px;
+}
+.back-btn{
+    display:block;
+    width:240px;
+    margin:30px auto;
+    text-align:center;
+    padding:12px;
+    background:#4caf50;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+</style>
+</head>
+<script>
+const lobbyBgm = new Audio("/static/sounds/tabidachi.mp3");
+lobbyBgm.loop = true;
+lobbyBgm.volume = 0.35;
+
+let lobbyBgmStarted = false;
+
+function startLobbyBgm() {
+    if (lobbyBgmStarted) return;
+
+    lobbyBgm.play().then(() => {
+        lobbyBgmStarted = true;
+    }).catch(() => {
+        lobbyBgmStarted = false;
+    });
+}
+
+document.addEventListener("click", startLobbyBgm);
+document.addEventListener("touchend", startLobbyBgm);
+
+window.addEventListener("load", () => {
+    startLobbyBgm();
+});
+
+window.addEventListener("beforeunload", () => {
+    lobbyBgm.pause();
+    lobbyBgm.currentTime = 0;
+});
+</script>
+<body>
+
+<div class="container">
+
+<h1>⚔ 協力バトル 戦闘システム説明 ⚔</h1>
+
+<div class="top-image">
+    <img src="/static/images/battle_guide_top.png" alt="勇者・タンク・魔術師">
+</div>
+
+<div class="section">
+    <h2>行動順について</h2>
+    <p>
+        行動順は現在HPの割合によって決まります。<br>
+        HP割合が高いキャラクターほど行動が早くなりやすく、
+        HP割合が低いキャラクターほど行動が遅くなりやすくなります。<br><br>
+        回復や防御は生存だけでなく、行動順を維持する上でも重要です。
+    </p>
+</div>
+
+<div class="section">
+    <h2>勇者</h2>
+    <p>
+        高い攻撃力を持つアタッカーです。<br><br>
+
+        勇者は連続で攻撃するとコンボがつながり、
+        攻撃力が少しずつ上昇していきます。<br><br>
+
+        魔法やアイテムによる防御効果を受けている場合は、
+        ダメージを受けてもコンボは継続します。<br><br>
+
+        ただし、<br>
+        ・回復行動を行った場合（自ら連続攻撃を途絶えさせる場合のこと。回復を受けた場合のことではない）<br>
+        ・防御効果が無い状態でダメージを受けた場合<br>
+        はコンボがリセットされます。
+    </p>
+</div>
+
+<div class="section">
+    <h2>タンク</h2>
+    <p>
+        盾を使って仲間を守る防御役です。<br><br>
+
+        基本の性質として、
+        盾を使用すると敵の単体攻撃は優先的にタンクへ向かいます。<br><br>
+
+        強力な盾を使い分けることで、
+        味方を守りながら戦況をコントロールできます。
+    </p>
+</div>
+
+<div class="section">
+    <h2>魔術師</h2>
+    <p>
+        攻撃魔法・支援魔法・回復魔法を扱う職業です。<br><br>
+
+        敵全体への攻撃や、
+        味方への強化・防御支援が得意です。<br><br>
+
+        状況に応じて攻撃と支援を使い分けることが重要になります。
+    </p>
+</div>
+
+
+<div class="section">
+    <h2>チャットで連携しよう</h2>
+    <p>
+        協力バトルでは戦闘中にチャットを使うことができます。<br><br>
+
+        「全体攻撃が来そう」
+        「次は回復をお願いします」
+        「この敵から先に倒そう」
+        など、仲間と相談しながら戦うことができます。<br><br>
+
+        強敵との戦いでは、チャットで作戦を立てることが勝利への近道です。
+    </p>
+</div>
+
+
+<div class="section">
+    <h2>みんなで楽しく遊ぶために</h2>
+    <p>
+        協力バトルは他のプレイヤーと協力して遊ぶゲームです。<br><br>
+
+        ゲームの進行を故意に妨害したり、
+        他のプレイヤーが不快になる発言を繰り返す人に対しては、
+        投票によって部屋から退出してもらうことができます。<br><br>
+
+        お互いに気持ちよく遊べるよう、ご協力をお願いします。
+    </p>
+</div>
+
+<a href="/" class="back-btn">ロビーへ戻る</a>
+
+</div>
+</body>
+</html>

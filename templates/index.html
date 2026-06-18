@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>協力バトルONLINE β版</title>
+
+<!-- ===== Aセクション：スタイル ===== -->
+<style>
+:root{
+    --bg:#151927;
+    --panel:#252d42;
+    --panel2:#303a55;
+    --gold:#ffd54f;
+    --red:#e53935;
+    --red2:#ff7043;
+    --blue:#42a5f5;
+    --green:#43a047;
+    --purple:#ab47bc;
+    --text:#ffffff;
+    --muted:#cfd8dc;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(circle at top, rgba(66,165,245,0.22), transparent 34%),
+        linear-gradient(180deg, #101421 0%, var(--bg) 60%, #101421 100%);
+    color:var(--text);
+    font-family:sans-serif;
+}
+
+.container{max-width:760px;margin:0 auto;padding:16px;}
+.panel{background:rgba(37,45,66,0.94);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 6px 18px rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);}
+.title-area{margin-bottom:16px;text-align:center;}
+.title-image{width:92%;max-width:520px;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,0.48);}
+h1{text-align:center;color:var(--gold);font-size:34px;margin:8px 0 6px;text-shadow:0 2px 10px rgba(0,0,0,0.5);}
+.beta-badge{display:inline-block;background:linear-gradient(90deg,var(--red),var(--red2));color:white;border-radius:999px;padding:4px 12px;font-size:14px;font-weight:bold;margin-left:6px;vertical-align:middle;}
+.subtitle{text-align:center;color:#e1f5fe;font-weight:bold;font-size:16px;line-height:1.7;margin-top:6px;}
+.login-info{text-align:center;margin-top:12px;color:#ddd;}
+.login-info a{color:var(--gold);font-weight:bold;}
+.hero-copy{font-size:15px;line-height:1.9;color:#e8edf7;text-align:center;margin-top:12px;}
+.feature-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+.feature-card{background:rgba(255,255,255,0.07);border-radius:12px;padding:12px;text-align:center;line-height:1.55;}
+.feature-card b{color:var(--gold);font-size:16px;}
+.feature-card .role-note{font-size:12px;color:#d7dee8;}
+.room-create-form{display:flex;flex-direction:column;gap:10px;}
+.room-title-input{width:100%;box-sizing:border-box;padding:13px;font-size:17px;border:none;border-radius:10px;background:#f5f7fb;color:#111;}
+.create-room-btn{width:100%;padding:18px;border:none;border-radius:14px;background:linear-gradient(90deg,#d32f2f,#ff7043);color:white;font-size:22px;font-weight:bold;cursor:pointer;box-shadow:0 4px 14px rgba(229,57,53,0.35);}
+.create-room-btn:hover{filter:brightness(1.08);}
+.empty-message{text-align:center;font-size:18px;color:#ccc;line-height:1.8;padding:20px 0;}
+.room-card{background:#394056;border-radius:14px;padding:16px;margin-top:16px;box-shadow:0 4px 10px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.06);}
+.room-card.battle{background:#31405d;}
+.room-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.room-title{font-size:20px;font-weight:bold;color:#ffecb3;margin-bottom:10px;line-height:1.5;}
+.room-info{color:#ddd;line-height:1.8;font-size:15px;}
+.room-status{display:inline-block;margin-top:6px;padding:4px 8px;border-radius:999px;background:#1b5e20;color:#c8e6c9;font-size:13px;font-weight:bold;}
+.room-status.battle{background:#6d4c41;color:#ffe0b2;}
+.enter-btn{flex-shrink:0;border:none;border-radius:10px;background:#e53935;color:white;font-size:16px;font-weight:bold;padding:14px 18px;cursor:pointer;}
+.enter-btn:disabled{background:#777;cursor:not-allowed;opacity:0.7;}
+.section-title{font-size:20px;color:var(--gold);font-weight:bold;margin-bottom:10px;}
+.note{margin-top:18px;color:#d7dee8;line-height:1.85;font-size:14px;}
+.password-label{margin-top:4px;color:#ddd;font-size:16px;font-weight:bold;}
+.password-note{color:#aaa;font-size:13px;line-height:1.6;}
+.info-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+.info-box{background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;border-left:4px solid var(--blue);}
+.info-box.warning{border-left-color:var(--gold);}
+.info-box b{color:#ffecb3;}
+.role-list{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;}
+.role-box{background:rgba(0,0,0,0.18);border-radius:12px;padding:12px;line-height:1.7;}
+.role-box.hero{border-left:4px solid #ef5350;}
+.role-box.tank{border-left:4px solid #42a5f5;}
+.role-box.mage{border-left:4px solid #ab47bc;}
+.small-note{font-size:13px;color:#b0bec5;line-height:1.7;margin-top:8px;}
+
+.job-visual-row{
+    display:grid;
+    grid-template-columns:1fr 1.12fr 1fr;
+    gap:10px;
+    align-items:end;
+    margin-top:18px;
+}
+
+.job-visual-card{
+    position:relative;
+    overflow:hidden;
+    border-radius:16px;
+    min-height:210px;
+    background:
+        radial-gradient(circle at top, rgba(255,213,79,0.18), transparent 42%),
+        rgba(0,0,0,0.24);
+    border:1px solid rgba(255,213,79,0.22);
+    box-shadow:0 8px 20px rgba(0,0,0,0.32);
+}
+
+.job-visual-card.hero-center{
+    min-height:240px;
+    border-color:rgba(255,213,79,0.48);
+    box-shadow:0 0 22px rgba(255,213,79,0.22), 0 8px 20px rgba(0,0,0,0.36);
+}
+
+.job-visual-card img{
+    width:100%;
+    height:230px;
+    object-fit:contain;
+    object-position:center bottom;
+    display:block;
+    filter:drop-shadow(0 12px 12px rgba(0,0,0,0.6));
+}
+
+.job-visual-card.hero-center img{
+    height:260px;
+}
+
+.job-visual-label{
+    position:absolute;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    padding:8px 10px;
+    border-radius:10px;
+    text-align:center;
+    color:white;
+    font-weight:bold;
+    letter-spacing:0.04em;
+    text-shadow:0 2px 6px rgba(0,0,0,0.7);
+    border:1px solid rgba(255,255,255,0.22);
+}
+
+.job-visual-label.tank{background:linear-gradient(90deg,rgba(30,136,229,0.86),rgba(21,101,192,0.86));}
+.job-visual-label.hero{background:linear-gradient(90deg,rgba(229,57,53,0.88),rgba(255,112,67,0.88));}
+.job-visual-label.mage{background:linear-gradient(90deg,rgba(142,36,170,0.88),rgba(171,71,188,0.88));}
+
+
+@media (max-width:640px){
+    h1{font-size:28px;}
+    .feature-row{grid-template-columns:1fr;}
+    .job-visual-row{grid-template-columns:1fr;align-items:center;}
+    .job-visual-card,.job-visual-card.hero-center{min-height:210px;}
+    .job-visual-card img,.job-visual-card.hero-center img{height:230px;}
+    .room-top{flex-direction:column;}
+    .enter-btn{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ===== Bセクション：タイトル画像 ===== -->
+<div class="title-area">
+    <img src="/static/images/title.png" class="title-image" alt="協力バトルONLINE">
+</div>
+
+<!-- ===== Cセクション：タイトル・ログイン情報 ===== -->
+<div class="panel">
+    <h1>協力バトルONLINE <span class="beta-badge">β版</span></h1>
+    <div class="subtitle">勇者・タンク・魔術師で挑むリアルタイム協力RPG</div>
+    <div class="hero-copy">
+        ストーリーはありません。<br>
+        オンラインでつながった仲間たちと協力して、ただひたすら敵を倒すゲームです。
+    </div>
+
+    <div class="job-visual-row">
+        <div class="job-visual-card">
+            <img src="/static/images/tanc.png" alt="タンク">
+            <div class="job-visual-label tank">タンク</div>
+        </div>
+        <div class="job-visual-card hero-center">
+            <img src="/static/images/yusya.png" alt="勇者">
+            <div class="job-visual-label hero">勇者</div>
+        </div>
+        <div class="job-visual-card">
+            <img src="/static/images/majyutu.png" alt="魔術師">
+            <div class="job-visual-label mage">魔術師</div>
+        </div>
+    </div>
+
+    <div class="feature-row">
+        <div class="feature-card"><b>最大6人で協力して戦えます</b><br><span class="role-note">部屋を作って協力プレイ</span></div>
+        <div class="feature-card"><b>3職業</b><br><span class="role-note">勇者・タンク・魔術師</span></div>
+        <div class="feature-card"><b>育成あり</b><br><span class="role-note">遊ぶほど少しずつ成長</span></div>
+    </div>
+
+    <div class="login-info">
+        ログイン中：{{ login_player_id }}
+        /
+        <a href="/logout">ログアウト</a>
+    </div>
+</div>
+
+<!-- ===== Dセクション：部屋作成 ===== -->
+<div class="panel">
+    <div class="section-title">新しい部屋を作る</div>
+    <form class="room-create-form" action="/character_select" method="GET">
+    <input type="hidden" name="action" value="create">
+
+    <input
+        class="room-title-input"
+        type="text"
+        name="room_title"
+        maxlength="40"
+        placeholder="部屋タイトル（例：初心者歓迎・ドラゴン討伐隊）"
+    >
+
+    <button class="create-room-btn" type="submit">
+        冒険に出発する
+    </button>
+
+    <div class="password-label">
+        合言葉を設定
+    </div>
+
+    <input
+        class="room-title-input"
+        type="text"
+        name="room_password"
+        maxlength="20"
+        placeholder="（空欄なら公開部屋）"
+    >
+
+    <div class="password-note">
+        ※空欄なら誰でも入れる公開部屋になります。<br>
+        友達だけで遊びたい場合は、合言葉を設定してください。
+    </div>
+</form>
+</div>
+
+<!-- ===== Eセクション：部屋一覧 ===== -->
+<div class="panel">
+    <div class="section-title">募集中の部屋</div>
+    <div class="small-note">人数や募集状況は自動で更新されます。</div>
+</div>
+<div id="roomListArea">
+{% if room_list and room_list|length > 0 %}
+    {% for room in room_list %}
+    <div class="room-card {% if room.started %}battle{% endif %}">
+        <div class="room-top">
+            <div>
+                <div class="room-title">{{ room.title }}{% if room.has_password %} 🔒{% endif %}</div>
+                <div class="room-info">{{ room.total }} / {{ room.max_players }}人参加中</div>
+                <div class="room-info">
+                    勇者:{{ room.job_counts["勇者"] }}
+                    タンク:{{ room.job_counts["タンク"] }}
+                    魔術師:{{ room.job_counts["魔術師"] }}
+                </div>
+                <div class="room-status {% if room.started %}battle{% endif %}">
+                    {% if room.started %}戦闘中{% else %}募集中{% endif %}
+                </div>
+            </div>
+            <form action="/character_select" method="GET" onsubmit="return checkRoomPassword(this, {{ 'true' if room.has_password else 'false' }});">
+                <input type="hidden" name="action" value="join">
+                <input type="hidden" name="room_id" value="{{ room.room_id }}">
+                <input type="hidden" name="room_password_input" value="">
+                <button class="enter-btn" type="submit" {% if room.started or room.total >= room.max_players %}disabled{% endif %}>
+                    {% if room.started %}戦闘中{% elif room.total >= room.max_players %}満員{% else %}入室する{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="panel"><div class="empty-message">まだ部屋はありません</div></div>
+{% endif %}
+</div>
+
+<!-- ===== Fセクション：ゲーム説明 ===== -->
+<div class="panel note">
+    <div class="section-title">このゲームについて</div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <b>ストーリーはありません。</b><br>
+            オンラインでつながった仲間たちと協力して、ただひたすら敵を倒すゲームです。<br>
+            通常戦闘は最大4人、レイド戦は最大6人で挑戦できます。
+        </div>
+
+        <div class="info-box warning">
+            <b>1つのアカウントに3つの職業があります。</b><br>
+            勇者だけを集中して育てることも、勇者・タンク・魔術師すべてを育てることもできます。<br>
+            部屋に入るたびに、使いたい職業を選べます。
+        </div>
+    </div>
+
+    <div class="role-list">
+        <div class="role-box hero">
+            <b>勇者</b><br>
+            高い攻撃力で敵を倒すアタッカー。連続攻撃で火力を伸ばします。
+        </div>
+        <div class="role-box tank">
+            <b>タンク</b><br>
+            盾を使って仲間を守る防御役。敵の攻撃を引きつけます。
+        </div>
+        <div class="role-box mage">
+            <b>魔術師</b><br>
+            攻撃魔法や支援魔法で戦況を変えるサポート役です。
+        </div>
+    </div>
+
+    <div class="small-note">
+        ※現在は開発中のβ版です。バランス調整や仕様変更が行われる場合があります。<br>
+        ※部屋タイトルには、タンク募集・初心者歓迎・合言葉あり等を自由に書けます。
+    </div>
+</div>
+
+<div style="text-align:center;margin-top:20px;">
+    <a href="/battle_guide"
+       style="
+       display:inline-block;
+       padding:12px 24px;
+       border-radius:12px;
+       background:#394056;
+       color:#ffd54f;
+       text-decoration:none;
+       font-weight:bold;
+       border:1px solid rgba(255,255,255,0.15);">
+       戦闘システム説明
+    </a>
+</div>
+
+</div>
+
+<!-- ===== Zセクション：受付ページ自動更新 ===== -->
+<script>
+function escapeHtml(text) {
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function checkRoomPassword(form, hasPassword) {
+    if (!hasPassword) {
+        return true;
+    }
+
+    const pw = window.prompt("この部屋は合言葉が必要です。");
+
+    if (pw === null) {
+        return false;
+    }
+
+    const passwordInput = form.querySelector('input[name="room_password_input"]');
+
+    if (!passwordInput) {
+        alert("合言葉入力欄の内部処理が見つかりません。");
+        return false;
+    }
+
+    passwordInput.value = pw;
+    return true;
+}
+
+function renderRoomList(rooms) {
+    const roomListArea = document.getElementById("roomListArea");
+    if (!roomListArea) return;
+
+    if (!rooms || rooms.length === 0) {
+        roomListArea.innerHTML = `
+            <div class="panel">
+                <div class="empty-message">まだ部屋はありません</div>
+            </div>
+        `;
+        return;
+    }
+
+    roomListArea.innerHTML = rooms.map(room => {
+        const started = Boolean(room.started);
+        const full = Number(room.total || 0) >= Number(room.max_players || 4);
+        const disabled = started || full;
+        const buttonText = started ? "戦闘中" : (full ? "満員" : "入室する");
+        const statusText = started ? "戦闘中" : "募集中";
+        const lockMark = room.has_password ? " 🔒" : "";
+
+        return `
+            <div class="room-card ${started ? "battle" : ""}">
+                <div class="room-top">
+                    <div>
+                        <div class="room-title">${escapeHtml(room.title || "冒険者募集")}${lockMark}</div>
+                        <div class="room-info">${room.total || 0} / ${room.max_players || 4}人参加中</div>
+                        <div class="room-info">
+                            勇者:${room.job_counts && room.job_counts["勇者"] ? room.job_counts["勇者"] : 0}
+                            タンク:${room.job_counts && room.job_counts["タンク"] ? room.job_counts["タンク"] : 0}
+                            魔術師:${room.job_counts && room.job_counts["魔術師"] ? room.job_counts["魔術師"] : 0}
+                        </div>
+                        <div class="room-status ${started ? "battle" : ""}">${statusText}</div>
+                    </div>
+
+                    <form action="/character_select" method="GET" onsubmit="return checkRoomPassword(this, ${room.has_password ? 'true' : 'false'});">
+                        <input type="hidden" name="action" value="join">
+                        <input type="hidden" name="room_id" value="${escapeHtml(room.room_id || "")}">
+                        <input type="hidden" name="room_password_input" value="">
+                        <button class="enter-btn" type="submit" ${disabled ? "disabled" : ""}>${buttonText}</button>
+                    </form>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function updateIndexState() {
+    try {
+        const res = await fetch("/index_state");
+        const data = await res.json();
+        renderRoomList(data.rooms || []);
+    } catch (e) {
+        // 通信失敗時は次回更新で復帰する
+    }
+}
+
+updateIndexState();
+setInterval(updateIndexState, 1000);
+
+/* ===== ロビーBGM ===== */
+
+const lobbyBgm = new Audio("/static/sounds/tabidachi.mp3");
+lobbyBgm.loop = true;
+lobbyBgm.volume = 0.35;
+
+let lobbyBgmStarted = false;
+
+function startLobbyBgm() {
+    if (lobbyBgmStarted) return;
+
+    lobbyBgm.play().then(() => {
+        lobbyBgmStarted = true;
+    }).catch(() => {
+        // ブラウザがまだ再生を許可していない場合は、次の操作で再挑戦する
+        lobbyBgmStarted = false;
+    });
+}
+
+document.addEventListener("click", startLobbyBgm);
+document.addEventListener("touchend", startLobbyBgm);
+
+window.addEventListener("load", () => {
+    startLobbyBgm();
+});
+
+/* ページ移動時に停止 */
+window.addEventListener("beforeunload", () => {
+    lobbyBgm.pause();
+    lobbyBgm.currentTime = 0;
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ロビー</title>
+
+  <!-- ===== Aセクション：全体スタイル ===== -->
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #1b1f2a;
+      color: white;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .panel {
+      background: #2b3142;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+    }
+
+
+    .room-password-line {
+      margin-top: 6px;
+      color: #cccccc;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    /* ===== Bセクション：自分のジョブ表示 ===== */
+    .my-job-box {
+      background: #111722;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border: 2px solid #ffd54f;
+      box-shadow: 0 0 10px rgba(255,213,79,0.45);
+    }
+
+    .job-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .job-image {
+      display: block;
+      width: 90%;
+      max-width: 320px;
+      height: auto;
+      margin: 0 auto 14px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+
+    .job-select-row {
+      margin: 8px 0 12px 0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .job-select-label {
+      color: #ffecb3;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .job-select {
+      min-width: 150px;
+      padding: 10px;
+      font-size: 17px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .job-change-note {
+      min-height: 18px;
+      margin-top: 4px;
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+
+    .equipment-select-row {
+      margin: 8px 0 0 0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .equipment-label {
+      color: #b3e5fc;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .equipment-select {
+      min-width: 180px;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .weapon-checkbox-area {
+      margin: 10px auto 0 auto;
+      max-width: 520px;
+      background: #1a2233;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #3d4a63;
+    }
+
+    .weapon-checkbox-title {
+      color: #b3e5fc;
+      font-weight: bold;
+      font-size: 15px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .weapon-checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .weapon-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #2b3142;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .weapon-checkbox-label input {
+      transform: scale(1.2);
+    }
+
+    .weapon-checkbox-help {
+      margin-top: 8px;
+      color: #ccc;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+
+    .equipment-note {
+      min-height: 18px;
+      margin-top: 6px;
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .my-status {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #ddd;
+      line-height: 1.7;
+      font-weight: normal;
+    }
+
+    /* ===== Cセクション：参加者表示 ===== */
+    .players-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .player-card {
+      background: #394056;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .player-card.me {
+      background: #5a4a1f;
+      border: 2px solid #ffd54f;
+      box-shadow: 0 0 10px rgba(255,213,79,0.6);
+    }
+
+    .player-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .player-name {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .player-job {
+      font-size: 14px;
+      color: #ffecb3;
+      font-weight: bold;
+    }
+
+    .player-stats {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    /* ===== Dセクション：開始ボタン ===== */
+    .start-btn {
+      width: 100%;
+      padding: 16px;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      background: #e53935;
+      cursor: pointer;
+    }
+
+    .start-btn:disabled {
+      background: #777;
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+
+    /* ===== D-2セクション：敵選択 ===== */
+    .enemy-select-box {
+      background: #111722;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      border: 1px solid #3d4a63;
+    }
+
+    .enemy-select-title {
+      color: #ffecb3;
+      font-weight: bold;
+      font-size: 17px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .enemy-button-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .enemy-choice-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #3d4a63;
+      border-radius: 10px;
+      background: #2b3142;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.08s ease, border-color 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+    }
+
+    .enemy-choice-btn:active {
+      transform: scale(0.98);
+    }
+
+    .enemy-choice-btn.active {
+      background: #5a4a1f;
+      border-color: #ffd54f;
+      box-shadow: 0 0 10px rgba(255,213,79,0.6);
+      color: #fff4c2;
+    }
+
+    .enemy-choice-btn.disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .enemy-select-note {
+      margin-top: 8px;
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+
+
+    /* ===== D-1Bセクション：部屋タイトル変更 ===== */
+    .room-title-box {
+      background: #111722;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid #3d4a63;
+    }
+
+    .room-title-current {
+      color: #ffecb3;
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .room-title-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .room-title-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      color: #222;
+      box-sizing: border-box;
+    }
+
+    .room-title-btn {
+      flex: 0 0 130px;
+      min-width: 130px;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #3949ab;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .room-title-btn:disabled,
+    .room-title-input:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .room-title-note {
+      margin-top: 8px;
+      color: #ccc;
+      font-size: 13px;
+      min-height: 18px;
+      line-height: 1.5;
+    }
+
+    .warning {
+      margin-top: 12px;
+      color: #ffcc00;
+      font-size: 15px;
+      line-height: 1.6;
+      font-weight: bold;
+    }
+
+    .small {
+      margin-top: 8px;
+      color: #ccc;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .status-line {
+      line-height: 1.7;
+      color: #ddd;
+    }
+
+    /* ===== C-2セクション：ロビーチャット ===== */
+    .chat-box {
+      max-height: 150px;
+      overflow-y: auto;
+      background: #111722;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .chat-message {
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .chat-name {
+      color: #ffd54f;
+      font-weight: bold;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      min-width: 0;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .chat-send-btn {
+      flex: 0 0 86px;
+      min-width: 86px;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #00897b;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .chat-send-btn:disabled,
+    .chat-input:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .chat-note {
+      color: #ccc;
+      font-size: 12px;
+      margin-top: 6px;
+      min-height: 16px;
+    }
+
+
+    /* ===== C-3セクション：ロビー投票追放 ===== */
+    .kick-vote-area {
+      background: #111722;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .kick-vote-note {
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    .kick-vote-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      background: #2b3142;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .kick-vote-name {
+      flex: 1;
+      font-weight: bold;
+    }
+
+    .kick-vote-count {
+      margin-top: 2px;
+      color: #ccc;
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+    .kick-vote-btn {
+      flex: 0 0 82px;
+      min-width: 82px;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #546e7a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .kick-vote-btn.active {
+      background: #e53935;
+      box-shadow: 0 0 10px rgba(229,57,53,0.65);
+    }
+
+  /* ===== A-2セクション：開発者入口 ===== */
+#developerSecretButton {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  opacity: 0;
+  cursor: default;
+  z-index: 9999;
+}
+  </style>
+</head>
+
+
+<audio id="tabidachiBgm" src="/static/sounds/tabidachi.mp3" loop></audio>
+
+<script>
+const tabidachiBgm = document.getElementById("tabidachiBgm");
+tabidachiBgm.volume = 0.35;
+
+function startTabidachiBgm() {
+  tabidachiBgm.play().catch(() => {});
+}
+
+document.addEventListener("click", startTabidachiBgm, { once: true });
+document.addEventListener("touchstart", startTabidachiBgm, { once: true });
+
+setTimeout(startTabidachiBgm, 500);
+</script>
+
+
+<body>
+
+<button
+  id="developerSecretButton"
+  type="button"
+  onclick="tapDeveloperSecret()"
+  aria-label="secret"
+></button>
+
+<!-- ===== Eセクション：画面構造 ===== -->
+<div class="container">
+
+  <div class="panel center">
+  <h1 id="roomTitleView">ロビー</h1>
+
+  <div
+    id="roomPasswordView"
+    class="room-password-line"
+    style="display:none;"
+  >
+  </div>
+
+  <div id="statusText" class="status-line">読み込み中...</div>
+</div>
+
+  <div class="panel">
+    <h2>部屋タイトル</h2>
+
+    <div class="room-title-box">
+      <div id="roomTitleCurrent" class="room-title-current">現在のタイトル：確認中...</div>
+
+      <div class="room-title-form">
+        <input
+          id="roomTitleInput"
+          class="room-title-input"
+          type="text"
+          maxlength="40"
+          placeholder="例：初心者歓迎 / ゴブリン練習 / レイド準備"
+        >
+        <button
+          id="roomTitleBtn"
+          class="room-title-btn"
+          type="button"
+          onclick="updateRoomTitle()"
+        >
+          変更
+        </button>
+      </div>
+
+      <div id="roomTitleNote" class="room-title-note"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div id="myJobBox" class="my-job-box">
+      <div id="jobTitle" class="job-title">ジョブ確認中...</div>
+
+      <img
+        id="jobImage"
+        class="job-image"
+        src=""
+        alt="ジョブ画像"
+        style="display:none;"
+      >
+
+      <div class="job-select-row">
+        <span class="job-select-label">ジョブ変更：</span>
+        <select id="jobSelect" class="job-select" onchange="changeJobFromSelect()">
+          <option value="勇者">勇者</option>
+          <option value="タンク">タンク</option>
+          <option value="魔術師">魔術師</option>
+        </select>
+      </div>
+
+      <div id="jobChangeNote" class="job-change-note"></div>
+
+      <div id="weaponSelectRow" class="equipment-select-row">
+        <span class="equipment-label">武器変更：</span>
+        <select id="weaponSelect" class="equipment-select" onchange="changeEquipmentFromSelect()"></select>
+      </div>
+
+      <div id="weaponCheckboxArea" class="weapon-checkbox-area" style="display:none;">
+        <div class="weapon-checkbox-title">勇者の持ち込み武器（最大3つ）</div>
+        <div id="weaponCheckboxGrid" class="weapon-checkbox-grid"></div>
+        <div class="weapon-checkbox-help">戦闘中は、ここで選んだ武器の中から毎ターン選択できます。</div>
+      </div>
+
+      <div id="shieldSelectRow" class="equipment-select-row" style="display:none;">
+        <span class="equipment-label">盾変更：</span>
+        <select id="shieldSelect" class="equipment-select" onchange="changeEquipmentFromSelect()"></select>
+      </div>
+
+      <div id="shieldCheckboxArea" class="weapon-checkbox-area" style="display:none;">
+        <div class="weapon-checkbox-title">タンクの持ち込み盾（最大3つ）</div>
+        <div id="shieldCheckboxGrid" class="weapon-checkbox-grid"></div>
+        <div class="weapon-checkbox-help">戦闘中は、ここで選んだ盾の中から毎ターン選択できます。</div>
+      </div>
+
+      <div id="skillCheckboxArea" class="weapon-checkbox-area" style="display:none;">
+        <div class="weapon-checkbox-title">魔術師の持ち込み魔法（最大3つ）</div>
+        <div id="skillCheckboxGrid" class="weapon-checkbox-grid"></div>
+        <div class="weapon-checkbox-help">戦闘中は、ここで選んだ魔法の中から毎ターン選択できます。</div>
+      </div>
+
+      <div id="equipmentNote" class="equipment-note"></div>
+
+      <div id="myStatus" class="my-status"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>参加者</h2>
+    <div id="playersArea" class="players-grid"></div>
+  </div>
+
+  <div class="panel">
+    <h2>チャット</h2>
+
+    <div id="chatBox" class="chat-box"></div>
+
+    <div class="chat-form">
+      <input
+        id="chatInput"
+        class="chat-input"
+        type="text"
+        maxlength="80"
+        placeholder="ロビーで相談できます"
+      >
+      <button id="chatSendBtn" class="chat-send-btn" onclick="sendChat()">送信</button>
+    </div>
+
+    <div id="chatNote" class="chat-note"></div>
+  </div>
+
+
+  <div class="panel">
+    <div class="enemy-select-box">
+      <div class="enemy-select-title">戦う敵を選択</div>
+      <div id="enemyButtonGrid" class="enemy-button-grid">
+        <button type="button" class="enemy-choice-btn" data-room="training_golem" onclick="selectEnemyRoom('training_golem')">訓練用ゴーレム</button>
+        <div style="height:20px;"></div>
+        <button type="button" class="enemy-choice-btn active" data-room="random_zako_1" onclick="selectEnemyRoom('random_zako_1')">敵１体戦</button>
+        <button type="button" class="enemy-choice-btn" data-room="random_zako_2" onclick="selectEnemyRoom('random_zako_2')">敵２体戦</button>
+        <button type="button" class="enemy-choice-btn" data-room="random_zako_3" onclick="selectEnemyRoom('random_zako_3')">敵３体戦</button>
+        <button type="button" class="enemy-choice-btn" data-room="random_zako_4" onclick="selectEnemyRoom('random_zako_4')">敵４体戦</button>
+
+<div style="height:20px;"></div>
+
+        <button type="button" class="enemy-choice-btn" data-room="volcano" onclick="selectEnemyRoom('volcano')">双竜レイド</button>
+      </div>
+      <div class="enemy-select-note">選択中のボタンが光ります。開始権がある人の選択で戦闘が始まります。</div>
+    </div>
+
+    <button id="startBtn" class="start-btn" onclick="startBattle()" disabled>
+      戦闘開始
+    </button>
+
+    <div class="warning">
+      ※全員揃うまで戦闘開始は押さないでください
+    </div>
+
+    <div id="startNote" class="small"></div>
+  </div>
+
+
+
+  <div class="panel">
+    <h2>退出</h2>
+
+    <button
+      class="start-btn"
+      type="button"
+      onclick="leaveLobby()"
+      style="background:#757575;"
+    >
+      部屋から退出
+    </button>
+  </div>
+
+
+
+  <div class="panel">
+    <h2>投票追放</h2>
+    <div id="lobbyKickVoteArea" class="kick-vote-area">確認中...</div>
+  </div>
+
+  <div class="panel center">
+    <h2>使用素材</h2>
+
+    <div class="small">
+      【通常戦】<br>
+      1体：提供 NEXUS MATERIAL<br>
+      2体：提供 音彩工房<br>
+      3体：提供 MusMus<br>
+      4体：提供 音彩工房
+    <br>
+    【ロビー】<br>
+    提供 もみじばミュージック<br>
+    <br>
+　【双竜レイド】<br>
+    提供 もみじばミュージック
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Fセクション：JavaScript処理 ===== -->
+<script>
+const myName = "{{ my_name }}";
+const roomId = "{{ room_id }}";
+let isChangingJob = false;
+let isChangingEquipment = false;
+let lastChatId = -1;
+let leavingLobby = false;
+let isChangingRoomTitle = false;
+let selectedEnemyRoom = "random_zako_1";
+let isSyncingEnemyRoom = false;
+let canSelectEnemyRoom = false;
+let developerSecretTapCount = 0;
+let developerSecretTimer = null;
+
+/* ===== F-1セクション：開発者入口3連打 ===== */
+function tapDeveloperSecret() {
+  developerSecretTapCount += 1;
+
+  if (developerSecretTimer) {
+    clearTimeout(developerSecretTimer);
+  }
+
+  developerSecretTimer = setTimeout(() => {
+    developerSecretTapCount = 0;
+    developerSecretTimer = null;
+  }, 1000);
+
+  if (developerSecretTapCount >= 3) {
+    developerSecretTapCount = 0;
+
+    if (developerSecretTimer) {
+      clearTimeout(developerSecretTimer);
+      developerSecretTimer = null;
+    }
+
+    location.href =
+      "/developer_room?name=" +
+      encodeURIComponent(myName) +
+      "&room_id=" +
+      encodeURIComponent(roomId);
+  }
+}
+
+
+/* ===== G-0セクション：接続維持処理 ===== */
+async function sendLobbyHeartbeat() {
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+
+  try {
+    await fetch("/heartbeat", {
+      method: "POST",
+      body: fd
+    });
+  } catch (e) {
+    // 通信失敗時は次の定期更新で再確認する
+  }
+}
+
+/* ===== Gセクション：ロビー状態更新 ===== */
+async function updateLobby() {
+  let data = null;
+
+  try {
+    const res = await fetch("/lobby_state?name=" + encodeURIComponent(myName) + "&room_id=" + encodeURIComponent(roomId));
+    data = await res.json();
+  } catch (e) {
+    document.getElementById("statusText").innerText = "通信確認中...";
+    return;
+  }
+
+  if (leavingLobby) {
+    return;
+  }
+
+  if (data.started) {
+    leavingLobby = true;
+    location.replace("/battle?name=" + encodeURIComponent(myName) + "&room_id=" + encodeURIComponent(roomId));
+    return;
+  }
+
+  // ===== 自分が投票追放などで本当に参加者から消えた時だけ受付へ戻る =====
+  if (data.viewer_in_party === false || data.viewer_blocked === true) {
+    leavingLobby = true;
+    document.getElementById("statusText").innerText = "パーティーから退出しました。受付へ戻ります。";
+    const myJobBox = document.getElementById("myJobBox");
+    if (myJobBox) {
+      myJobBox.innerHTML = `<div class="job-title">パーティーから退出しました</div><div class="small">受付へ戻ります。</div>`;
+    }
+    const area = document.getElementById("lobbyKickVoteArea");
+    if (area) area.innerHTML = "";
+    setTimeout(() => {
+      location.replace("/");
+    }, 300);
+    return;
+  }
+
+  updateStatusText(data);
+  updateRoomTitleDisplay(data);
+  updateEnemyButtonPermission(data);
+  syncEnemyRoomFromServer(data.selected_enemy_room || "random_zako_1");
+  updateMyJob(data);
+  renderPlayers(data.players, data.host_name, data.starter_name);
+  updateStartButton(data);
+  renderLobbyChat(data.chat_messages || [], data);
+  renderLobbyKickVote(data);
+}
+
+/* ===== Hセクション：状態テキスト表示 ===== */
+function updateStatusText(data) {
+  const jobCounts = data.job_counts || {"勇者": 0, "タンク": 0, "魔術師": 0};
+
+  document.getElementById("statusText").innerHTML =
+    `現在の参加人数：${data.current_players} / ${data.max_players}<br>` +
+    `勇者:${jobCounts["勇者"] || 0}　タンク:${jobCounts["タンク"] || 0}　魔術師:${jobCounts["魔術師"] || 0}<br>` +
+    `最初の参加者：${data.host_name || "-"}<br>` +
+    `開始できる人：${data.starter_name || "-"}`;
+}
+
+/* ===== Iセクション：ジョブ画像判定 ===== */
+function getJobImage(job) {
+  if (job === "勇者") {
+    return "/static/images/yusya.png";
+  }
+
+  if (job === "タンク") {
+    return "/static/images/tanc.png";
+  }
+
+  if (job === "魔術師") {
+    return "/static/images/majyutu.png";
+  }
+
+  return "";
+}
+
+/* ===== Jセクション：自分のジョブ表示 ===== */
+function updateMyJob(data) {
+  const me = data.players.find(p => p.name === myName);
+
+  const jobTitle = document.getElementById("jobTitle");
+  const jobImage = document.getElementById("jobImage");
+  const myStatus = document.getElementById("myStatus");
+  const jobSelect = document.getElementById("jobSelect");
+  const weaponSelect = document.getElementById("weaponSelect");
+  const shieldSelect = document.getElementById("shieldSelect");
+
+  if (!me) {
+    jobTitle.innerText = "パーティーから退出しました";
+    jobImage.style.display = "none";
+    myStatus.innerText = "受付へ戻ります。";
+    jobSelect.disabled = true;
+    if (weaponSelect) weaponSelect.disabled = true;
+    if (shieldSelect) shieldSelect.disabled = true;
+
+    if (!leavingLobby) {
+      leavingLobby = true;
+      setTimeout(() => {
+        location.replace("/");
+      }, 300);
+    }
+
+    return;
+  }
+
+  jobTitle.innerText = `あなたは ${me.job || "未定"} です`;
+
+  if (!isChangingJob && document.activeElement !== jobSelect) {
+    jobSelect.value = me.job || "勇者";
+  }
+
+  jobSelect.disabled = isChangingJob || isChangingEquipment;
+
+  updateEquipmentSelects(data, me);
+
+  const imgPath = getJobImage(me.job);
+
+  if (imgPath) {
+    jobImage.src = imgPath;
+    jobImage.style.display = "block";
+  } else {
+    jobImage.style.display = "none";
+  }
+
+  const carriedWeaponText =
+    me.carried_weapons && me.carried_weapons.length
+      ? me.carried_weapons.map(w => w.name).join(" / ")
+      : (me.weapon_name || "武器なし");
+
+  const weaponText = me.job === "魔術師" ? "" : `　武器:${carriedWeaponText}`;
+  const carriedShieldText =
+    me.carried_shields && me.carried_shields.length
+      ? me.carried_shields.map(s => s.name).join(" / ")
+      : (me.shield_name || "盾なし");
+
+  const shieldText = me.job === "タンク" ? `　盾:${carriedShieldText}` : "";
+
+  const carriedSkillText =
+    me.carried_skills && me.carried_skills.length
+      ? me.carried_skills.map(s => s.name).join(" / ")
+      : "魔法なし";
+
+  const skillText = me.job === "魔術師" ? `　魔法:${carriedSkillText}` : "";
+
+  myStatus.innerText =
+    `HP:${me.hp}/${me.max_hp}　ATK:${me.attack}　MAGIC:${me.magic || me.heal}${weaponText}${shieldText}${skillText}`;
+}
+
+/* ===== Kセクション：ジョブ変更通信 ===== */
+async function changeJobFromSelect() {
+  if (isChangingJob) return;
+
+  const jobSelect = document.getElementById("jobSelect");
+  const note = document.getElementById("jobChangeNote");
+  const selectedJob = jobSelect.value;
+
+  isChangingJob = true;
+  jobSelect.disabled = true;
+  note.innerText = "ジョブを変更中...";
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("job", selectedJob);
+
+  try {
+    const res = await fetch("/change_job", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.message || "ジョブ変更に失敗しました");
+    } else {
+      note.innerText = "ジョブを変更しました。装備候補も更新しました。";
+      const equipmentNote = document.getElementById("equipmentNote");
+      if (equipmentNote) equipmentNote.innerText = "";
+    }
+  } catch (e) {
+    alert("通信エラーでジョブ変更できませんでした");
+  }
+
+  isChangingJob = false;
+  jobSelect.disabled = false;
+  updateLobby();
+}
+
+
+
+/* ===== K-2セクション：装備プルダウン表示 ===== */
+function updateEquipmentSelects(data, me) {
+  const weaponSelectRow = document.getElementById("weaponSelectRow");
+  const weaponSelect = document.getElementById("weaponSelect");
+  const weaponCheckboxArea = document.getElementById("weaponCheckboxArea");
+  const weaponCheckboxGrid = document.getElementById("weaponCheckboxGrid");
+  const shieldSelect = document.getElementById("shieldSelect");
+  const shieldSelectRow = document.getElementById("shieldSelectRow");
+  const shieldCheckboxArea = document.getElementById("shieldCheckboxArea");
+  const shieldCheckboxGrid = document.getElementById("shieldCheckboxGrid");
+  const skillCheckboxArea = document.getElementById("skillCheckboxArea");
+  const skillCheckboxGrid = document.getElementById("skillCheckboxGrid");
+
+  if (!weaponSelect || !shieldSelect || !shieldSelectRow || !me) return;
+
+  const weaponOptions =
+    data.available_weapons && data.available_weapons.length
+      ? data.available_weapons
+      : (me.carried_weapons || []);
+
+  const shieldOptions =
+    data.available_shields && data.available_shields.length
+      ? data.available_shields
+      : (me.carried_shields || []);
+
+  const skillOptions =
+    data.available_skills && data.available_skills.length
+      ? data.available_skills
+      : (me.owned_skills || []);
+
+  const carriedWeaponIds = me.carried_weapon_ids || [];
+  const carriedShieldIds = me.carried_shield_ids || [];
+  const carriedSkillIds = me.carried_skill_ids || [];
+
+  // ===== 魔術師：武器ではなく、所持魔法から最大3つ選択 =====
+  if (me.job === "魔術師") {
+    if (weaponSelectRow) weaponSelectRow.style.display = "none";
+    if (weaponCheckboxArea) weaponCheckboxArea.style.display = "none";
+    if (weaponCheckboxGrid) weaponCheckboxGrid.innerHTML = "";
+
+    if (shieldSelectRow) shieldSelectRow.style.display = "none";
+    if (shieldCheckboxArea) shieldCheckboxArea.style.display = "none";
+    if (shieldCheckboxGrid) shieldCheckboxGrid.innerHTML = "";
+
+    if (skillCheckboxArea) skillCheckboxArea.style.display = "block";
+
+    if (!isChangingEquipment && skillCheckboxGrid) {
+      skillCheckboxGrid.innerHTML = "";
+
+      if (skillOptions.length === 0) {
+        skillCheckboxGrid.innerHTML = `<div style="color:#ccc; font-size:13px; line-height:1.6;">所持魔法がありません。</div>`;
+      }
+
+      skillOptions.forEach(s => {
+        const label = document.createElement("label");
+        label.className = "weapon-checkbox-label";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = s.id;
+        checkbox.checked = carriedSkillIds.includes(s.id);
+        checkbox.disabled = isChangingJob || isChangingEquipment;
+        checkbox.onchange = () => changeSkillsFromCheckbox(checkbox);
+
+        const span = document.createElement("span");
+        span.textContent = s.name || s.id;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        skillCheckboxGrid.appendChild(label);
+      });
+    }
+  }
+
+  // ===== 勇者・タンク：武器最大3つチェックボックス =====
+  else if (me.job === "勇者" || me.job === "タンク") {
+    if (skillCheckboxArea) skillCheckboxArea.style.display = "none";
+    if (skillCheckboxGrid) skillCheckboxGrid.innerHTML = "";
+
+    if (weaponSelectRow) weaponSelectRow.style.display = "none";
+    if (weaponCheckboxArea) weaponCheckboxArea.style.display = "block";
+
+    const title = weaponCheckboxArea.querySelector(".weapon-checkbox-title");
+    if (title) {
+      title.innerText =
+        me.job === "タンク"
+          ? "タンクの持ち込み武器（最大3つ）"
+          : "勇者の持ち込み武器（最大3つ）";
+    }
+
+    if (!isChangingEquipment && weaponCheckboxGrid) {
+      weaponCheckboxGrid.innerHTML = "";
+
+      weaponOptions.forEach(w => {
+        const label = document.createElement("label");
+        label.className = "weapon-checkbox-label";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = w.id;
+        checkbox.checked = carriedWeaponIds.includes(w.id);
+        checkbox.disabled = isChangingJob || isChangingEquipment;
+        checkbox.onchange = () => changeWeaponsFromCheckbox(checkbox);
+
+        const span = document.createElement("span");
+        span.textContent = w.name || w.id;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        weaponCheckboxGrid.appendChild(label);
+      });
+    }
+  }
+
+  // ===== その他：従来のプルダウン =====
+  else {
+    if (skillCheckboxArea) skillCheckboxArea.style.display = "none";
+    if (skillCheckboxGrid) skillCheckboxGrid.innerHTML = "";
+
+    if (weaponSelectRow) weaponSelectRow.style.display = "flex";
+    if (weaponCheckboxArea) weaponCheckboxArea.style.display = "none";
+
+    const currentWeaponId = me.weapon_id || (
+      me.carried_weapon_ids && me.carried_weapon_ids.length
+        ? me.carried_weapon_ids[0]
+        : ""
+    );
+
+    if (!isChangingEquipment && document.activeElement !== weaponSelect) {
+      weaponSelect.innerHTML = "";
+
+      if (weaponOptions.length === 0) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "武器なし";
+        weaponSelect.appendChild(option);
+      } else {
+        weaponOptions.forEach(w => {
+          const option = document.createElement("option");
+          option.value = w.id;
+          option.textContent = w.name || w.id;
+          weaponSelect.appendChild(option);
+        });
+      }
+
+      weaponSelect.value = currentWeaponId;
+    }
+  }
+
+  // ===== タンク：盾最大3つチェックボックス =====
+  if (me.job === "タンク") {
+    shieldSelectRow.style.display = "none";
+    if (shieldCheckboxArea) shieldCheckboxArea.style.display = "block";
+
+    if (!isChangingEquipment && shieldCheckboxGrid) {
+      shieldCheckboxGrid.innerHTML = "";
+
+      shieldOptions.forEach(s => {
+        const label = document.createElement("label");
+        label.className = "weapon-checkbox-label";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = s.id;
+        checkbox.checked = carriedShieldIds.includes(s.id);
+        checkbox.disabled = isChangingJob || isChangingEquipment;
+        checkbox.onchange = () => changeShieldsFromCheckbox(checkbox);
+
+        const span = document.createElement("span");
+        span.textContent = s.name || s.id;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        shieldCheckboxGrid.appendChild(label);
+      });
+    }
+  } else if (me.job !== "魔術師") {
+    shieldSelectRow.style.display = "none";
+    shieldSelect.innerHTML = "";
+    if (shieldCheckboxArea) shieldCheckboxArea.style.display = "none";
+    if (shieldCheckboxGrid) shieldCheckboxGrid.innerHTML = "";
+  }
+
+  weaponSelect.disabled = isChangingJob || isChangingEquipment || me.job === "魔術師";
+  shieldSelect.disabled = isChangingJob || isChangingEquipment || me.job !== "タンク";
+
+  document.querySelectorAll("#weaponCheckboxGrid input[type='checkbox']").forEach(cb => {
+    cb.disabled = isChangingJob || isChangingEquipment;
+  });
+
+  document.querySelectorAll("#shieldCheckboxGrid input[type='checkbox']").forEach(cb => {
+    cb.disabled = isChangingJob || isChangingEquipment;
+  });
+
+  document.querySelectorAll("#skillCheckboxGrid input[type='checkbox']").forEach(cb => {
+    cb.disabled = isChangingJob || isChangingEquipment;
+  });
+}
+
+function getCheckedWeaponIds() {
+  return Array.from(document.querySelectorAll("#weaponCheckboxGrid input[type='checkbox']:checked"))
+    .map(cb => cb.value);
+}
+
+function getCheckedShieldIds() {
+  return Array.from(document.querySelectorAll("#shieldCheckboxGrid input[type='checkbox']:checked"))
+    .map(cb => cb.value);
+}
+
+function getCheckedSkillIds() {
+  return Array.from(document.querySelectorAll("#skillCheckboxGrid input[type='checkbox']:checked"))
+    .map(cb => cb.value);
+}
+
+async function changeWeaponsFromCheckbox(changedCheckbox) {
+  if (isChangingEquipment) return;
+
+  const checkedIds = getCheckedWeaponIds();
+  const note = document.getElementById("equipmentNote");
+
+  if (checkedIds.length > 3) {
+    changedCheckbox.checked = false;
+    if (note) note.innerText = "武器は最大3つまでです。";
+    return;
+  }
+
+  if (checkedIds.length === 0) {
+    changedCheckbox.checked = true;
+    if (note) note.innerText = "武器は最低1つ選んでください。";
+    return;
+  }
+
+  await changeEquipmentFromSelect();
+}
+
+async function changeShieldsFromCheckbox(changedCheckbox) {
+  if (isChangingEquipment) return;
+
+  const checkedIds = getCheckedShieldIds();
+  const note = document.getElementById("equipmentNote");
+
+  if (checkedIds.length > 3) {
+    changedCheckbox.checked = false;
+    if (note) note.innerText = "盾は最大3つまでです。";
+    return;
+  }
+
+  if (checkedIds.length === 0) {
+    changedCheckbox.checked = true;
+    if (note) note.innerText = "盾は最低1つ選んでください。";
+    return;
+  }
+
+  await changeEquipmentFromSelect();
+}
+
+async function changeSkillsFromCheckbox(changedCheckbox) {
+  if (isChangingEquipment) return;
+
+  const checkedIds = getCheckedSkillIds();
+  const note = document.getElementById("equipmentNote");
+
+  if (checkedIds.length > 3) {
+    changedCheckbox.checked = false;
+    if (note) note.innerText = "魔法は最大3つまでです。";
+    return;
+  }
+
+  if (checkedIds.length === 0) {
+    changedCheckbox.checked = true;
+    if (note) note.innerText = "魔法は最低1つ選んでください。";
+    return;
+  }
+
+  await changeEquipmentFromSelect();
+}
+
+
+/* ===== K-3セクション：装備変更通信 ===== */
+async function changeEquipmentFromSelect() {
+  if (isChangingEquipment) return;
+
+  const weaponSelect = document.getElementById("weaponSelect");
+  const shieldSelect = document.getElementById("shieldSelect");
+  const note = document.getElementById("equipmentNote");
+
+  const checkedWeaponIds = getCheckedWeaponIds();
+  const checkedShieldIds = getCheckedShieldIds();
+  const checkedSkillIds = getCheckedSkillIds();
+
+  const weaponId = checkedWeaponIds.length > 0
+    ? checkedWeaponIds[0]
+    : (weaponSelect ? weaponSelect.value : "");
+
+  const shieldId = checkedShieldIds.length > 0
+    ? checkedShieldIds[0]
+    : (shieldSelect ? shieldSelect.value : "");
+
+  isChangingEquipment = true;
+
+  if (weaponSelect) weaponSelect.disabled = true;
+  if (shieldSelect) shieldSelect.disabled = true;
+  document.querySelectorAll("#weaponCheckboxGrid input[type='checkbox']").forEach(cb => {
+    cb.disabled = true;
+  });
+
+  document.querySelectorAll("#shieldCheckboxGrid input[type='checkbox']").forEach(cb => {
+    cb.disabled = true;
+  });
+
+  document.querySelectorAll("#skillCheckboxGrid input[type='checkbox']").forEach(cb => {
+    cb.disabled = true;
+  });
+  if (note) note.innerText = "装備を変更中...";
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("weapon_id", weaponId);
+  fd.append("shield_id", shieldId);
+
+  checkedWeaponIds.forEach(wid => {
+    fd.append("carried_weapon_ids", wid);
+  });
+
+  checkedShieldIds.forEach(sid => {
+    fd.append("carried_shield_ids", sid);
+  });
+
+  checkedSkillIds.forEach(skillId => {
+    fd.append("carried_skill_ids", skillId);
+  });
+
+  try {
+    const res = await fetch("/change_equipment", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.message || "装備変更に失敗しました");
+    } else {
+      if (note) note.innerText = "装備を変更しました。";
+    }
+  } catch (e) {
+    alert("通信エラーで装備変更できませんでした");
+  }
+
+  isChangingEquipment = false;
+  updateLobby();
+}
+
+
+/* ===== K-4セクション：ロビーチャット処理 ===== */
+function renderLobbyChat(messages, data) {
+  const chatBox = document.getElementById("chatBox");
+  const chatInput = document.getElementById("chatInput");
+  const chatSendBtn = document.getElementById("chatSendBtn");
+  const chatNote = document.getElementById("chatNote");
+
+  if (!chatBox || !chatInput || !chatSendBtn || !chatNote) return;
+
+  const latest = messages.slice(-10);
+
+  if (latest.length === 0) {
+    chatBox.innerHTML = `<div style="color:#aaa;">まだメッセージはありません。</div>`;
+  } else {
+    chatBox.innerHTML = latest.map(m => `
+      <div class="chat-message">
+        <span class="chat-name">${escapeHtml(m.name)}：</span>
+        <span>${escapeHtml(m.message)}</span>
+      </div>
+    `).join("");
+  }
+
+  const newestId = messages.length > 0 ? messages[messages.length - 1].id : -1;
+
+  if (newestId !== lastChatId) {
+    lastChatId = newestId;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  const canChat = !data.started;
+
+  chatInput.disabled = !canChat;
+  chatSendBtn.disabled = !canChat;
+
+  if (canChat) {
+    chatNote.innerText = "ロビーで作戦相談できます。";
+  } else {
+    chatNote.innerText = "戦闘中は戦闘画面のチャットを使ってください。";
+  }
+}
+
+async function sendChat() {
+  const chatInput = document.getElementById("chatInput");
+
+  if (!chatInput) return;
+
+  const message = chatInput.value.trim();
+
+  if (!message) return;
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("message", message);
+
+  try {
+    const res = await fetch("/send_chat", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      chatInput.value = "";
+      await updateLobby();
+    } else if (data.message) {
+      alert(data.message);
+    }
+  } catch (e) {
+    alert("通信エラーでチャットを送信できませんでした");
+  }
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key !== "Enter") return;
+
+  const chatInput = document.getElementById("chatInput");
+
+  if (document.activeElement === chatInput) {
+    event.preventDefault();
+    sendChat();
+    return;
+  }
+
+  const roomTitleInput = document.getElementById("roomTitleInput");
+
+  if (document.activeElement === roomTitleInput) {
+    event.preventDefault();
+    updateRoomTitle();
+  }
+});
+
+
+
+
+/* ===== K-5セクション：ロビー投票追放処理 ===== */
+function renderLobbyKickVote(data) {
+  const area = document.getElementById("lobbyKickVoteArea");
+  if (!area) return;
+
+  const players = data.players || [];
+  const kickVotes = data.kick_votes || {};
+
+  if (players.length < 3) {
+    area.innerHTML = `<div>3人以上のときに使用できます。</div>`;
+    return;
+  }
+
+  const activeTarget = kickVotes[myName] || "";
+
+  area.innerHTML = "";
+
+  const note = document.createElement("div");
+  note.className = "kick-vote-note";
+  note.innerText = "押すとON、もう一度押すとOFFです。自分以外の全員が同じ人をONにすると追放されます。";
+  area.appendChild(note);
+
+  players.forEach(targetPlayer => {
+    if (targetPlayer.name === myName) return;
+
+
+    const row = document.createElement("div");
+    row.className = "kick-vote-row";
+
+    const nameBox = document.createElement("div");
+    nameBox.className = "kick-vote-name";
+    nameBox.innerText = `${targetPlayer.name}を追放候補にする`;
+
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = activeTarget === targetPlayer.name ? "kick-vote-btn active" : "kick-vote-btn";
+    btn.innerText = activeTarget === targetPlayer.name ? "ON" : "OFF";
+    btn.onclick = () => voteKick(targetPlayer.name);
+
+    row.appendChild(nameBox);
+    row.appendChild(btn);
+    area.appendChild(row);
+  });
+}
+
+async function voteKick(targetName) {
+  const fd = new FormData();
+  fd.append("voter", myName);
+  fd.append("room_id", roomId);
+  fd.append("target", targetName);
+
+  try {
+    const res = await fetch("/vote_kick", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.message || "投票追放に失敗しました");
+      return;
+    }
+
+    await updateLobby();
+  } catch (e) {
+    alert("通信エラーで投票追放を更新できませんでした");
+  }
+}
+
+
+
+/* ===== K-6セクション：部屋タイトル変更処理 ===== */
+function updateRoomTitleDisplay(data) {
+  const title = data.room_title || data.party_title || "冒険者募集";
+
+  const titleView = document.getElementById("roomTitleView");
+  const passwordView = document.getElementById("roomPasswordView");
+  const current = document.getElementById("roomTitleCurrent");
+  const input = document.getElementById("roomTitleInput");
+  const btn = document.getElementById("roomTitleBtn");
+
+  if (titleView) {
+    titleView.innerText = title;
+  }
+
+
+  if (passwordView) {
+    if (data.room_password) {
+      passwordView.style.display = "block";
+      passwordView.innerText =
+        "合言葉：" + data.room_password;
+    } else {
+      passwordView.style.display = "none";
+    }
+  }
+
+  if (current) {
+    current.innerText = `現在のタイトル：${title}`;
+  }
+
+  if (input && !isChangingRoomTitle && document.activeElement !== input) {
+    input.value = title;
+  }
+
+  if (input) {
+    input.disabled = isChangingRoomTitle || data.started;
+  }
+
+  if (btn) {
+    btn.disabled = isChangingRoomTitle || data.started;
+  }
+}
+
+async function updateRoomTitle() {
+  if (isChangingRoomTitle) return;
+
+  const input = document.getElementById("roomTitleInput");
+  const note = document.getElementById("roomTitleNote");
+  const btn = document.getElementById("roomTitleBtn");
+
+  if (!input) return;
+
+  const title = input.value.trim();
+
+  if (!title) {
+    if (note) note.innerText = "タイトルを入力してください。";
+    return;
+  }
+
+  isChangingRoomTitle = true;
+  input.disabled = true;
+  if (btn) btn.disabled = true;
+  if (note) note.innerText = "タイトルを変更中...";
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("title", title);
+  fd.append("room_id", roomId);
+
+  try {
+    const res = await fetch("/update_room_title", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      if (note) note.innerText = "部屋タイトルを変更しました。";
+      await updateLobby();
+    } else {
+      if (note) note.innerText = data.message || "タイトルを変更できませんでした。";
+    }
+  } catch (e) {
+    if (note) note.innerText = "通信エラーでタイトルを変更できませんでした。";
+  }
+
+  isChangingRoomTitle = false;
+  input.disabled = false;
+  if (btn) btn.disabled = false;
+}
+
+/* ===== Lセクション：参加者一覧表示 ===== */
+function renderPlayers(players, hostName, starterName) {
+  const area = document.getElementById("playersArea");
+  area.innerHTML = "";
+
+  players.forEach(p => {
+    const div = document.createElement("div");
+
+    div.className =
+      "player-card" +
+      (p.name === myName ? " me" : "");
+
+    div.innerHTML = `
+      <div class="player-row">
+        <div class="player-name">
+          ${escapeHtml(p.name)}
+          ${p.name === hostName ? "（最初の参加者）" : ""}
+          ${p.name === starterName ? "（開始権あり）" : ""}
+        </div>
+        <div class="player-job">
+          ${escapeHtml(p.job || "未定")}
+        </div>
+      </div>
+      <div class="player-stats">
+        HP:${p.hp}/${p.max_hp}　ATK:${p.attack}　MAGIC:${p.magic || p.heal}<br>
+        ${p.job === "魔術師"
+          ? `魔法:${escapeHtml(p.carried_skills && p.carried_skills.length ? p.carried_skills.map(s => s.name).join(" / ") : "魔法なし")}`
+          : `武器:${escapeHtml(p.carried_weapons && p.carried_weapons.length ? p.carried_weapons.map(w => w.name).join(" / ") : (p.weapon_name || "武器なし"))}`}
+        ${p.job === "タンク" ? `　盾:${escapeHtml(p.carried_shields && p.carried_shields.length ? p.carried_shields.map(s => s.name).join(" / ") : (p.shield_name || "盾なし"))}` : ""}
+      </div>
+    `;
+
+    area.appendChild(div);
+  });
+}
+
+/* ===== Mセクション：開始ボタン制御 ===== */
+function updateStartButton(data) {
+  const startBtn = document.getElementById("startBtn");
+  const startNote = document.getElementById("startNote");
+
+  if (myName === data.starter_name) {
+    startBtn.disabled = false;
+    startNote.innerText = "あなたが最後にロビーへ入ったので、戦闘開始できます。";
+  } else {
+    startBtn.disabled = true;
+    startNote.innerText = "最後にロビーへ入った人が戦闘開始できます。";
+  }
+}
+
+/* ===== M-2セクション：敵選択ボタン処理 ===== */
+function updateEnemyButtonPermission(data) {
+  canSelectEnemyRoom = myName === data.starter_name;
+
+  document.querySelectorAll(".enemy-choice-btn").forEach(btn => {
+    btn.disabled = !canSelectEnemyRoom;
+
+    if (canSelectEnemyRoom) {
+      btn.classList.remove("disabled");
+    } else {
+      btn.classList.add("disabled");
+    }
+  });
+}
+
+function applyEnemyRoomButtonState(room) {
+  selectedEnemyRoom = room;
+
+  document.querySelectorAll(".enemy-choice-btn").forEach(btn => {
+    if (btn.dataset.room === selectedEnemyRoom) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
+
+function syncEnemyRoomFromServer(room) {
+  if (!room || isSyncingEnemyRoom) return;
+  applyEnemyRoomButtonState(room);
+}
+
+async function selectEnemyRoom(room) {
+  if (!canSelectEnemyRoom) {
+    return;
+  }
+
+  applyEnemyRoomButtonState(room);
+
+  if (isSyncingEnemyRoom) return;
+
+  isSyncingEnemyRoom = true;
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("enemy_room", room);
+
+  try {
+    const res = await fetch("/update_selected_enemy_room", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.message || "敵選択を変更できませんでした");
+      await updateLobby();
+    } else {
+      applyEnemyRoomButtonState(data.selected_enemy_room || room);
+    }
+  } catch (e) {
+    alert("通信エラーで敵選択を共有できませんでした");
+    await updateLobby();
+  }
+
+  isSyncingEnemyRoom = false;
+}
+
+/* ===== M-3セクション：ロビー退出 ===== */
+async function leaveLobby() {
+  if (!confirm("パーティーから退出しますか？")) return;
+
+  leavingLobby = true;
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+
+  try {
+    const res = await fetch("/leave_party", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      location.href = "/";
+    } else if (data.message) {
+      alert(data.message);
+      leavingLobby = false;
+    }
+  } catch (e) {
+    alert("通信エラーで退出できませんでした");
+    leavingLobby = false;
+  }
+}
+
+
+/* ===== Nセクション：戦闘開始処理 ===== */
+function startBattle() {
+  const room = selectedEnemyRoom || "random_zako_1";
+
+  location.href =
+    "/start?name=" +
+    encodeURIComponent(myName) +
+    "&room_id=" +
+    encodeURIComponent(roomId) +
+    "&room=" +
+    encodeURIComponent(room);
+}
+
+/* ===== Oセクション：文字エスケープ ===== */
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/* ===== Pセクション：定期更新 ===== */
+applyEnemyRoomButtonState(selectedEnemyRoom);
+sendLobbyHeartbeat();
+updateLobby();
+setInterval(updateLobby, 1000);
+setInterval(sendLobbyHeartbeat, 5000);
+</script>
+
+</body>
+</html>

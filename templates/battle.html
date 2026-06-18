@@ -1,0 +1,3122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>協力バトル</title>
+
+  <!-- ===== Aセクション：全体スタイル ===== -->
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #1b1f2a;
+      color: white;
+    }
+
+
+    /* ===== A-2セクション：画面揺れ ===== */
+
+    .screen-shake-small {
+      animation: screenShakeSmall 0.28s ease-in-out;
+    }
+
+    .screen-shake-medium {
+      animation: screenShakeMedium 0.32s ease-in-out;
+    }
+
+    .screen-shake-large {
+      animation: screenShakeLarge 0.40s ease-in-out;
+    }
+
+    @keyframes screenShakeSmall {
+      0%   { transform: translate(0,0); }
+      25%  { transform: translate(-2px,1px); }
+      50%  { transform: translate(2px,-1px); }
+      75%  { transform: translate(-1px,1px); }
+      100% { transform: translate(0,0); }
+    }
+
+    @keyframes screenShakeMedium {
+      0%   { transform: translate(0,0); }
+      20%  { transform: translate(-6px,3px); }
+      40%  { transform: translate(6px,-3px); }
+      60%  { transform: translate(-4px,2px); }
+      80%  { transform: translate(4px,-2px); }
+      100% { transform: translate(0,0); }
+    }
+
+    @keyframes screenShakeLarge {
+      0%   { transform: translate(0,0); }
+      20%  { transform: translate(-15px,8px); }
+      40%  { transform: translate(15px,-8px); }
+      60%  { transform: translate(-10px,5px); }
+      80%  { transform: translate(10px,-5px); }
+      100% { transform: translate(0,0); }
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .panel {
+      background: #2b3142;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    .center { text-align: center; }
+
+    /* ===== Bセクション：ボス表示 ===== */
+    .boss-name {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .boss-image {
+      display: block;
+      width: 260px;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto 12px auto;
+      border-radius: 12px;
+    }
+
+    .boss-image.boss-damage-flash {
+      animation: bossDamageFlash 0.55s ease-in-out 0s 1;
+      box-shadow: 0 0 22px rgba(255,23,68,1);
+    }
+
+    @keyframes bossDamageFlash {
+      0% {
+        filter: brightness(1.8) saturate(1.5);
+        box-shadow: 0 0 24px rgba(255,23,68,1);
+      }
+      50% {
+        filter: brightness(0.8) saturate(1.0);
+        box-shadow: 0 0 4px rgba(255,23,68,0.2);
+      }
+      100% {
+        filter: brightness(1.8) saturate(1.5);
+        box-shadow: 0 0 24px rgba(255,23,68,1);
+      }
+    }
+
+    .boss-bar-wrap {
+      width: 100%;
+      background: #555;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 16px;
+      margin-top: 6px;
+    }
+
+    .boss-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4d4d, #ff9933);
+      transition: width 0.3s;
+    }
+
+    /* ===== Cセクション：メインパネル ===== */
+    .main-panel {
+      min-height: 82px;
+      background: #111722;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .status-text {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #ddd;
+      min-height: 22px;
+    }
+
+    /* ===== Dセクション：プレイヤー表示 ===== */
+    .players-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .player-card {
+      background: #394056;
+      border-radius: 10px;
+      padding: 10px;
+      transition: background 0.2s, box-shadow 0.2s, border 0.2s;
+    }
+
+    .player-card.me {
+      background: #5a4a1f;
+      border: 2px solid #ffd54f;
+      box-shadow: 0 0 10px rgba(255,213,79,0.6);
+    }
+
+    .player-card.selectable-heal {
+      border: 2px solid #66bb6a;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(102,187,106,0.65);
+    }
+
+    .player-card.selectable-guard {
+      border: 2px solid #42a5f5;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(66,165,245,0.65);
+    }
+
+    .player-card.damage-flash {
+      animation: damageFlash 0.9s ease-in-out 0s 2;
+      border: 2px solid #ff1744;
+      box-shadow: 0 0 18px rgba(255,23,68,0.95);
+    }
+
+    @keyframes damageFlash {
+      0% { background: #ff1744; box-shadow: 0 0 18px rgba(255,23,68,1); }
+      50% { background: #394056; box-shadow: 0 0 4px rgba(255,23,68,0.2); }
+      100% { background: #ff1744; box-shadow: 0 0 18px rgba(255,23,68,1); }
+    }
+
+    .dead { opacity: 0.5; }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .player-name {
+      font-weight: bold;
+      font-size: 14px;
+      min-width: 90px;
+    }
+
+    .player-stats {
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    /* ===== Eセクション：HPバー ===== */
+    .hp-bar-wrap {
+      flex: 1;
+      background: #555;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 10px;
+    }
+
+    .hp-bar {
+      height: 100%;
+      transition: width 0.3s;
+    }
+
+
+
+
+    /* ===== D-2セクション：ボス被弾エフェクト ===== */
+    .boss-hit-effect {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .slash-effect {
+      position: absolute;
+      width: 220%;
+      height: 16px;
+      left: -60%;
+      top: 50%;
+      transform: rotate(-25deg) translateY(-50%);
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,0),
+          var(--physical-effect-color-strong, rgba(255,255,255,0.95)),
+          var(--physical-effect-color-solid, rgba(120,220,255,1)),
+          rgba(255,255,255,0)
+        );
+      box-shadow:
+        0 0 18px var(--physical-effect-color-solid, rgba(120,220,255,1)),
+        0 0 36px var(--physical-effect-color-soft, rgba(120,220,255,0.9));
+      opacity: 0;
+      animation: slashAnim 0.45s ease-out forwards;
+    }
+
+    .slash-effect.second {
+      top: 40%;
+      animation-delay: 0.08s;
+    }
+
+    .slash-effect.third {
+      top: 60%;
+      animation-delay: 0.16s;
+    }
+
+    @keyframes slashAnim {
+      0% {
+        transform: rotate(-25deg) translate(-140%, -50%);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(-25deg) translate(90%, -50%);
+        opacity: 0;
+      }
+    }
+
+
+
+    
+    .magic-burst-effect {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 4px solid var(--magic-effect-color-strong, rgba(255,255,255,0.95));
+      box-shadow:
+        0 0 20px var(--magic-effect-color-solid, rgba(255,255,255,1)),
+        0 0 40px var(--magic-effect-color-soft, rgba(255,255,255,0.9));
+      animation: magicBurstAnim 0.8s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .magic-sparkle-effect,
+    .magic-sparkle-effect::before,
+    .magic-sparkle-effect::after {
+      position: absolute;
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--magic-effect-color, white);
+      box-shadow: 0 0 12px var(--magic-effect-color, white), 0 0 24px var(--magic-effect-color, white);
+      animation: sparkleAnim 0.9s ease-out forwards;
+    }
+
+    .magic-sparkle-effect {
+      left: 50%;
+      top: 50%;
+    }
+
+    .magic-sparkle-effect::before {
+      left: -40px;
+      top: -25px;
+      animation-delay: 0.05s;
+    }
+
+    .magic-sparkle-effect::after {
+      left: 35px;
+      top: 20px;
+      animation-delay: 0.1s;
+    }
+
+    .magic-star-effect {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 80px;
+      height: 80px;
+      transform: translate(-50%, -50%);
+      animation: starAnim 0.8s ease-out forwards;
+    }
+
+    .magic-star-effect::before,
+    .magic-star-effect::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      background: var(--magic-effect-color-strong, rgba(255,255,255,0.95));
+      box-shadow: 0 0 10px var(--magic-effect-color, white), 0 0 20px var(--magic-effect-color, white);
+      transform: translate(-50%, -50%);
+    }
+
+    .magic-star-effect::before {
+      width: 4px;
+      height: 80px;
+    }
+
+    .magic-star-effect::after {
+      width: 80px;
+      height: 4px;
+    }
+
+    @keyframes magicBurstAnim {
+      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+    }
+
+    @keyframes sparkleAnim {
+      0% { transform: translate(0,0) scale(0.2); opacity: 1; }
+      100% { transform: translate(0,-35px) scale(1.4); opacity: 0; }
+    }
+
+    @keyframes starAnim {
+      0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+    }
+
+
+    /* ===== D-3セクション：複数敵表示 ===== */
+    .enemies-grid {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: stretch;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .enemy-card {
+      position: relative;
+      flex: 1 1 130px;
+      max-width: 190px;
+      min-width: 120px;
+      background: #171d2b;
+      border-radius: 14px;
+      padding: 8px;
+      text-align: center;
+      overflow: hidden;
+      border: 1px solid #2d3548;
+    }
+
+    .enemy-card.dead {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+
+    .enemy-name {
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 4px;
+      min-height: 32px;
+    }
+
+    .enemy-image {
+      width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
+    }
+
+    .enemy-hp-text {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .enemy-bar-wrap {
+      background: #555;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 8px;
+      margin-top: 4px;
+    }
+
+    .enemy-bar {
+      height: 100%;
+      background: #e53935;
+      transition: width 0.3s;
+    }
+
+
+
+    /* ===== D-4セクション：敵表示レイヤー調整 ===== */
+    .enemy-hit-effect {
+      z-index: 2;
+    }
+
+    .enemy-image {
+      position: relative;
+      z-index: 1;
+    }
+
+    .enemy-name,
+    .enemy-hp-text,
+    .enemy-bar-wrap {
+      position: relative;
+      z-index: 3;
+    }
+
+
+    /* ===== Fセクション：操作ボタン ===== */
+    .actions {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      min-width: 130px;
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .raid-reward-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .raid-reward-card {
+      background: #394056;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .raid-reward-card.owned {
+      opacity: 0.45;
+      filter: grayscale(0.8);
+    }
+
+    .raid-reward-row {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .raid-reward-img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+    }
+
+    .raid-reward-name {
+      font-size: 17px;
+      font-weight: bold;
+      color: #ffd54f;
+      margin-bottom: 5px;
+    }
+
+    .raid-reward-desc {
+      font-size: 13px;
+      color: #ddd;
+      line-height: 1.5;
+    }
+
+    .raid-reward-kind {
+      font-size: 12px;
+      color: #81d4fa;
+      margin-bottom: 4px;
+    }
+
+    .raid-reward-btn {
+      width: 100%;
+      margin-top: 10px;
+      min-width: 0;
+      background: #f57c00;
+    }
+
+    .raid-reward-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+
+
+
+    .attack-btn { background: #e53935; }
+    .heal-btn { background: #43a047; }
+    .guard-btn { background: #1e88e5; }
+    .cancel-btn { background: #757575; }
+    .rematch-btn { background: #8e24aa; }
+    .end-btn { background: #757575; }
+
+
+    /* ===== G-0セクション：チャット表示 ===== */
+    .chat-box {
+      max-height: 120px;
+      overflow-y: auto;
+      background: #111722;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .chat-message {
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .chat-name {
+      color: #ffd54f;
+      font-weight: bold;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      min-width: 0;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .chat-send-btn {
+      flex: 0 0 86px;
+      min-width: 86px;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #00897b;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .chat-send-btn:disabled,
+    .chat-input:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .chat-note {
+      color: #ccc;
+      font-size: 12px;
+      margin-top: 6px;
+      min-height: 16px;
+    }
+
+    /* ===== G-2セクション：投票退出 ===== */
+    .kick-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .kick-label {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .kick-btn {
+      flex: 0 0 120px;
+      min-width: 120px;
+      padding: 10px;
+      font-size: 14px;
+      background: #6d4c41;
+    }
+
+    .kick-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .kick-note {
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ===== Gセクション：ログ表示 ===== */
+    .log-box {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #111722;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ===== G-2セクション：退出ボタン ===== */
+    .leave-self-btn {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #546e7a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .kick-member-btn {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #6d4c41;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .kick-member-btn.kick-on {
+      background: #c62828;
+      box-shadow: 0 0 12px rgba(255,82,82,0.75);
+      border: 2px solid #ffcc80;
+    }
+
+    .kick-vote-status {
+      margin-bottom: 12px;
+      color: #ffecb3;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+
+    /* ===== F-2セクション：戦闘中の盾選択表示 ===== */
+    .battle-shield-btn {
+      width: 100%;
+      min-width: 0;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      align-items: center;
+      text-align: left;
+    }
+
+    .battle-shield-img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .battle-shield-name {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .battle-shield-meta {
+      font-size: 12px;
+      color: #e1f5fe;
+      margin-top: 3px;
+    }
+
+  
+    .disabled-action-btn {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.6);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===== Aセクション：画面構造 ===== -->
+<div class="container">
+
+  <div class="panel center">
+    <h1>協力バトル</h1>
+    ターン <span id="turn">1</span>
+  </div>
+
+  <!-- ===== Bセクション：敵表示 ===== -->
+  <div class="panel">
+    <div id="enemyTitle" class="boss-name">敵</div>
+    <div id="enemiesArea"></div>
+
+    <div>合計HP: <span id="bossHpText">0 / 0</span></div>
+    <div class="boss-bar-wrap">
+      <div id="bossBar" class="boss-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===== Cセクション：操作・戦闘状況パネル ===== -->
+  <div class="panel">
+    <div id="mainPanel" class="main-panel">読み込み中...</div>
+    <div id="actionStatus" class="status-text"></div>
+  </div>
+
+
+  <!-- ===== C-2セクション：チャット表示 ===== -->
+  <div class="panel">
+    <h2>チャット</h2>
+
+    <div id="chatBox" class="chat-box"></div>
+
+    <div class="chat-form">
+      <input
+        id="chatInput"
+        class="chat-input"
+        type="text"
+        maxlength="80"
+        placeholder="メッセージを入力"
+      >
+      <button id="chatSendBtn" class="chat-send-btn" onclick="sendChat()">送信</button>
+    </div>
+
+    <div id="chatNote" class="chat-note"></div>
+  </div>
+
+  <!-- ===== Dセクション：プレイヤー表示 ===== -->
+  <div class="panel">
+    <h2>パーティー</h2>
+    <div id="playersArea"></div>
+  </div>
+
+  <!-- ===== Gセクション：ログ表示 ===== -->
+  <div class="panel">
+    <h2>ログ</h2>
+    <div id="logBox" class="log-box"></div>
+  </div>
+
+  <!-- ===== G-2セクション：退出 ===== -->
+  <div class="panel">
+    <h2>退出</h2>
+
+    <button
+      class="leave-self-btn"
+      type="button"
+      onclick="leaveParty()"
+    >
+      自分から退出
+    </button>
+
+    <div id="kickVoteArea" class="kick-note"></div>
+  </div>
+
+</div>
+
+<!-- ===== Hセクション：JavaScript処理 ===== -->
+<script>
+const myName = "{{ my_name }}";
+const roomId = "{{ room_id }}";
+
+let lastEventId = -1;
+let lastTurn = 0;
+let previousPhase = null;
+let actionSubmitted = false;
+let isPlayingEvent = false;
+let selectingTarget = null;
+let selectedEnemyTarget = null;
+let selectedWeaponId = "";
+let selectedShieldId = "";
+let selectedSkillId = "";
+let victoryBgmPlayed = false;
+let selectingWeaponAction = null;
+let selectingShieldAction = false;
+let selectingSkillAction = false;
+let selectingSkillKind = "attack";
+
+let currentBossMax = 1;
+let lastPlayers = [];
+let previousHpMap = {};
+let previousBossHp = null;
+let previousEnemiesHpMap = {};
+let lastEnemiesRenderKey = "";
+let defeatedEnemyIds = new Set();
+let damageFlashNames = new Set();
+let damageFlashTimer = null;
+let bossFlashTimer = null;
+let bossFlashTimers = {};
+let lastChatId = -1;
+
+let soundUnlocked = false;
+/* ===== H-1Cセクション：画面揺れ ===== */
+
+function triggerScreenShake(size = "medium") {
+  const container = document.querySelector(".container");
+
+  if (!container) return;
+
+  container.classList.remove(
+    "screen-shake-small",
+    "screen-shake-medium",
+    "screen-shake-large"
+  );
+
+  void container.offsetWidth;
+
+  container.classList.add(`screen-shake-${size}`);
+
+  setTimeout(() => {
+    container.classList.remove(
+      "screen-shake-small",
+      "screen-shake-medium",
+      "screen-shake-large"
+    );
+  }, 450);
+}
+let lastBattleData = null;
+
+/* ===== H-1Bセクション：非表示メッセージ判定 ===== */
+function isHiddenBattleMessage(text) {
+  return String(text || "").includes("行動順");
+}
+
+function getVisibleBattleEvents(events) {
+  return (events || []).filter(event => !isHiddenBattleMessage(event && event.text));
+}
+
+function getVisibleBattleLogs(logs) {
+  return (logs || []).filter(text => !isHiddenBattleMessage(text));
+}
+
+/* ===== H-2セクション：効果音設定 ===== */
+const sounds = {
+  hero_attack: new Audio("/static/sounds/hero_attack.mp3"),
+  mage_attack: new Audio("/static/sounds/mage_attack.mp3"),
+  tank_attack: new Audio("/static/sounds/tank_attack.mp3"),
+  damage: new Audio("/static/sounds/damage.mp3"),
+  heal_single: new Audio("/static/sounds/heal_single.mp3"),
+  heal_all: new Audio("/static/sounds/heal_all.mp3"),
+  magic_defense: new Audio("/static/sounds/magic_defense.mp3"),
+  boss_attack: new Audio("/static/sounds/boss_attack.mp3"),
+  boss_breath: new Audio("/static/sounds/boss_breath.mp3")
+}; 
+
+/* ===== H-2Bセクション：BGM設定 ===== */
+
+let battleBgmFile = "/static/sounds/battle_bgm.mp3";
+let battleBgm = new Audio(battleBgmFile);
+battleBgm.loop = true;
+battleBgm.volume = 0.35;
+
+const victoryBgm = new Audio("/static/sounds/victory.mp3");
+victoryBgm.loop = false;
+victoryBgm.volume = 0.55;
+
+const defeatBgm = new Audio("/static/sounds/defeat.mp3");
+defeatBgm.loop = false;
+defeatBgm.volume = 0.55;
+
+let battleEnded = false;
+let victoryPlayed = false;
+let rematchInProgress = false;
+let leavingBattle = false;
+
+function getBattleBgmFileByRoomName(roomName) {
+  const name = String(roomName || "");
+
+  if (name.includes("敵１体戦") || name.includes("敵１体戦")) {
+    return "/static/sounds/battle_bgm_1.mp3";
+  }
+
+  if (name.includes("敵２体戦") || name.includes("敵２体戦")) {
+    return "/static/sounds/battle_bgm_2.mp3";
+  }
+
+  if (name.includes("敵３体戦") || name.includes("敵３体戦")) {
+    return "/static/sounds/battle_bgm_3.mp3";
+  }
+
+  if (name.includes("敵４体戦") || name.includes("敵４体戦")) {
+    return "/static/sounds/battle_bgm_4.mp3";
+  }
+
+  return "/static/sounds/battle_bgm.mp3";
+}
+
+function switchBattleBgmByRoomName(roomName) {
+  const nextFile = getBattleBgmFileByRoomName(roomName);
+
+  if (nextFile === battleBgmFile) {
+    return;
+  }
+
+  const shouldPlay =
+    soundUnlocked &&
+    !battleEnded &&
+    !rematchInProgress &&
+    !battleBgm.paused;
+
+  battleBgm.pause();
+  battleBgm.currentTime = 0;
+
+  battleBgmFile = nextFile;
+  battleBgm = new Audio(battleBgmFile);
+  battleBgm.loop = true;
+  battleBgm.volume = 0.35;
+  battleBgm.load();
+
+  if (shouldPlay) {
+    battleBgm.play().catch(() => {});
+  }
+}
+
+Object.values(sounds).forEach(sound => {
+  sound.preload = "auto";
+  sound.volume = 0.8;
+});
+
+/* ===== H-3セクション：効果音再生処理 ===== */
+function unlockSounds() {
+  if (soundUnlocked) return;
+  soundUnlocked = true;
+
+  Object.values(sounds).forEach(sound => {
+    sound.load();
+  });
+
+  battleBgm.load();
+  victoryBgm.load();
+  defeatBgm.load();
+
+  startBattleBgm();
+}
+
+document.addEventListener("click", unlockSounds, { once: true });
+document.addEventListener("touchstart", unlockSounds, { once: true });
+
+function playSound(soundName) {
+  const sound = sounds[soundName];
+  if (!sound) return;
+
+  try {
+    sound.currentTime = 0;
+    sound.play().catch(() => {});
+  } catch (e) {
+    // ブラウザで再生が止められた場合は何もしない
+  }
+}
+
+function startBattleBgm() {
+  victoryBgmPlayed = false;
+  if (battleEnded) return;
+
+  victoryBgm.pause();
+  victoryBgm.currentTime = 0;
+
+  if (battleBgm.paused) {
+    battleBgm.play().catch(() => {});
+  }
+}
+
+function stopBattleBgm() {
+  battleBgm.pause();
+  battleBgm.currentTime = 0;
+}
+
+function playVictoryBgm() {
+  if (victoryPlayed) return;
+
+  victoryPlayed = true;
+
+  battleBgm.pause();
+  battleBgm.currentTime = 0;
+
+  defeatBgm.pause();
+  defeatBgm.currentTime = 0;
+
+  victoryBgm.pause();
+  victoryBgm.currentTime = 0;
+  victoryBgm.play().catch(() => {});
+}
+
+function playDefeatBgm() {
+  if (victoryPlayed) return;
+
+  victoryPlayed = true;
+
+  stopBattleBgm();
+
+  victoryBgm.pause();
+  victoryBgm.currentTime = 0;
+
+  defeatBgm.currentTime = 0;
+  defeatBgm.play().catch(() => {});
+}
+
+function stopAllMusic() {
+  battleBgm.pause();
+  battleBgm.currentTime = 0;
+
+  victoryBgm.pause();
+  victoryBgm.currentTime = 0;
+
+  defeatBgm.pause();
+  defeatBgm.currentTime = 0;
+}
+
+function handleEndMusic(data) {
+  if (data.phase !== "end") return;
+
+  if (rematchInProgress) return;
+
+  battleEnded = true;
+
+  if (data.winner === "players") {
+    playVictoryBgm();
+  } else if (data.winner === "boss") {
+    playDefeatBgm();
+  } else {
+    stopBattleBgm();
+  }
+}
+
+function getPlayerJobByName(name) {
+  const player = lastPlayers.find(p => p.name === name);
+  return player ? player.job : null;
+}
+
+function getActorNameFromBattleText(text) {
+  text = String(text || "");
+
+  if (text.includes("は") && text.includes("で攻撃")) {
+    return text.split("は")[0];
+  }
+
+  if (text.includes("の")) {
+    return text.split("の")[0];
+  }
+
+  return "";
+}
+
+function playPlayerAttackSoundByName(actorName) {
+  const job = getPlayerJobByName(actorName);
+
+  if (job === "勇者") {
+    playSound("hero_attack");
+  } else if (job === "タンク") {
+    playSound("tank_attack");
+  } else if (job === "魔術師") {
+    playSound("mage_attack");
+  }
+}
+
+function playSoundForEventText(text) {
+  if (!text) return;
+
+  if (text.includes("の全体回復")) {
+    playSound("heal_all");
+    return;
+  }
+
+  if (text.includes("の選択回復")) {
+    playSound("heal_single");
+    return;
+  }
+
+  if (text.includes("魔法防御") || text.includes("魔法障壁")) {
+    playSound("magic_defense");
+    return;
+  }
+
+  if (text.includes("を構えた") || text.includes("をかばう") || text.includes("は身構えた")) {
+    playSound("guard");
+    return;
+  }
+
+  // 勇者・タンク：〇〇は武器名で攻撃！
+  if (text.includes("は") && text.includes("で攻撃")) {
+    const actorName = getActorNameFromBattleText(text);
+    playPlayerAttackSoundByName(actorName);
+    return;
+  }
+
+  // 魔術師：〇〇の魔法名！
+  if (text.includes("の") && text.includes("！")) {
+    const actorName = getActorNameFromBattleText(text);
+    const job = getPlayerJobByName(actorName);
+
+    if (job === "魔術師") {
+      playSound("mage_attack");
+      return;
+    }
+  }
+}
+
+/* ===== Iセクション：HP色判定 ===== */
+function getHpColor(hp, maxHp) {
+  const r = hp / maxHp;
+  if (r < 0.3) return "#ff5252";
+  if (r < 0.6) return "#ffb300";
+  return "#3ddc84";
+}
+
+/* ===== Jセクション：プレイヤー描画 ===== */
+function renderPlayers(players, compact=false) {
+  const area = document.getElementById("playersArea");
+  area.innerHTML = "";
+
+  const grid = document.createElement("div");
+  grid.className = "players-grid";
+
+  players.forEach(p => {
+    grid.appendChild(createPlayerCard(p, compact));
+  });
+
+  area.appendChild(grid);
+}
+
+/* ===== Kセクション：プレイヤーカード生成 ===== */
+function createPlayerCard(p, compact=false) {
+  const div = document.createElement("div");
+
+  const percent = p.max_hp > 0 ? (p.hp / p.max_hp) * 100 : 0;
+  const color = getHpColor(p.hp, p.max_hp);
+
+  let selectableClass = "";
+  if (selectingTarget === "heal" && p.hp > 0 && !compact) {
+    selectableClass = " selectable-heal";
+  }
+  if (selectingTarget === "guard" && p.hp > 0 && !compact) {
+    selectableClass = " selectable-guard";
+  }
+
+  if (selectingTarget === "reflect" && p.hp > 0 && !compact) {
+    selectableClass = " selectable-guard";
+  }
+
+  div.className =
+    "player-card" +
+    (p.name === myName ? " me" : "") +
+    (p.hp <= 0 ? " dead" : "") +
+    selectableClass +
+    (damageFlashNames.has(p.name) ? " damage-flash" : "");
+
+  if (selectingTarget === "heal" && p.hp > 0 && !compact) {
+    div.onclick = () => {
+      sendAction("heal", p.name);
+    };
+  }
+
+  if (selectingTarget === "guard" && p.hp > 0 && !compact) {
+    div.onclick = () => {
+      sendAction("guard", p.name);
+    };
+  }
+
+  if (selectingTarget === "reflect" && p.hp > 0 && !compact) {
+    div.onclick = () => {
+      sendAction("skill", p.name);
+    };
+  }
+
+  if (compact) {
+    div.innerHTML = `
+      <div class="player-row">
+        <div class="player-name">${p.name}（${p.job || "未設定"}）${p.online === false ? "（通信切断）" : ""}</div>
+        <div class="hp-bar-wrap">
+          <div class="hp-bar" style="width:${percent}%; background:${color}"></div>
+        </div>
+      </div>
+    `;
+  } else {
+    div.innerHTML = `
+      <div class="player-row">
+        <div class="player-name">${p.name}（${p.job || "未設定"}）${p.online === false ? "（通信切断）" : ""}</div>
+        <div class="player-stats">
+          HP:${p.hp}/${p.max_hp} ATK:${p.attack} HEAL:${p.heal}<br>
+          <span style="color:#ffcc80;">
+            持込:${p.carried_weapons && p.carried_weapons.length
+              ? p.carried_weapons.map(w => w.name).join(" / ")
+              : (p.weapon_name || "武器なし")}
+          </span>
+        </div>
+      </div>
+      <div class="hp-bar-wrap" style="margin-top:6px;">
+        <div class="hp-bar" style="width:${percent}%; background:${color}"></div>
+      </div>
+    `;
+  }
+
+  return div;
+}
+
+/* ===== Lセクション：イベント再生 ===== */
+function playEvents(events) {
+  events = getVisibleBattleEvents(events);
+  if (!events || events.length === 0) return;
+
+  isPlayingEvent = true;
+  selectingTarget = null;
+
+  clearDamageFlash();
+  clearBossFlash();
+
+  let i = 0;
+
+  function finishEvents() {
+    isPlayingEvent = false;
+    clearDamageFlash();
+    clearBossFlash();
+
+    // ===== 全演出終了後だけ、最終状態と操作UIを反映する =====
+    if (lastBattleData) {
+      updateBossDisplay(lastBattleData);
+      renderPlayers(lastBattleData.players, false);
+      syncPreviousHpFromData(lastBattleData);
+      renderMainPanel(lastBattleData);
+    } else {
+      renderPlayers(lastPlayers, false);
+    }
+
+    const hasVictoryEvent = events.some(event => event && event.text === "勝利！");
+    const hasDefeatEvent = events.some(event => event && event.text === "敗北");
+
+    // ===== 敗北BGMはイベント演出が全部終わってから鳴らす =====
+    // 勝利BGMは「勝利！」表示と同時に鳴らす。
+    // ただし古いイベントや途中復帰で未再生だった場合の保険として、ここでも一度だけ確認する。
+    if (hasVictoryEvent && !victoryPlayed) {
+      battleEnded = true;
+      playVictoryBgm();
+    }
+
+    if (hasDefeatEvent) {
+      battleEnded = true;
+      playDefeatBgm();
+    }
+  }
+
+  function next() {
+    if (i >= events.length) {
+      finishEvents();
+      return;
+    }
+
+    const mainPanel = document.getElementById("mainPanel");
+
+    // ===== ボスセリフは赤表示 =====
+    if (events[i].text && events[i].text.includes("ボス「")) {
+      mainPanel.style.color = "#ff4040";
+    } else {
+      mainPanel.style.color = "";
+    }
+
+    mainPanel.innerText = events[i].text;
+    playSoundForEventText(events[i].text);
+
+    // ===== 勝利BGMは「勝利！」の字幕が表示された瞬間に鳴らす =====
+    if (events[i].text === "勝利！") {
+      battleEnded = true;
+      playVictoryBgm();
+    }
+
+    if (events[i].flash_enemy) {
+      if (events[i].target_enemies && events[i].target_enemies.length > 0) {
+        flashBossMany(events[i].target_enemies, events[i].flash_type || "physical", events[i].flash_element || "light");
+      } else {
+        flashBoss(events[i].target_enemy, events[i].flash_type || "physical", events[i].flash_element || "light");
+      }
+    }
+
+    if (events[i].state) {
+      applyEventState(events[i].state);
+    }
+
+    // ===== 「倒した！」表示の瞬間にグレーアウト反映 =====
+    if (
+      events[i].text &&
+      events[i].text.includes("を倒した") &&
+      events[i].target_enemy
+    ) {
+      defeatedEnemyIds.add(events[i].target_enemy);
+
+      const defeatedCard = document.getElementById("enemy-" + events[i].target_enemy);
+
+      if (defeatedCard) {
+        defeatedCard.classList.add("dead");
+      }
+    }
+
+    i++;
+    setTimeout(next, 2000);
+  }
+
+  next();
+}
+
+/* ===== Mセクション：イベント中のHP反映・被ダメージ判定 ===== */
+function applyEventState(state) {
+  const oldHpMap = {...previousHpMap};
+  const oldBossHp = previousBossHp;
+
+  document.getElementById("bossHpText").innerText =
+    `${state.boss_hp} / ${currentBossMax}`;
+
+  const bossPercent = currentBossMax > 0 ? (state.boss_hp / currentBossMax) * 100 : 0;
+  document.getElementById("bossBar").style.width = bossPercent + "%";
+
+  if (state.enemies_hp) {
+      previousEnemiesHpMap = {...state.enemies_hp};
+  }
+
+previousBossHp = state.boss_hp;
+
+  // ===== 敵HPバーだけイベント中に反映。倒れグレーアウトは演出終了後 =====
+  if (state.enemies_hp) {
+    Object.keys(state.enemies_hp).forEach(enemyId => {
+      const card = document.getElementById("enemy-" + enemyId);
+
+      if (!card) return;
+
+      const enemy =
+        lastBattleData &&
+        lastBattleData.enemies
+          ? lastBattleData.enemies.find(e => e.id === enemyId)
+          : null;
+
+      if (!enemy) return;
+
+      const hp = state.enemies_hp[enemyId];
+      const percent = enemy.max_hp > 0 ? (hp / enemy.max_hp) * 100 : 0;
+
+      const hpText = card.querySelector(".enemy-hp-text");
+      const hpBar = card.querySelector(".enemy-bar");
+
+      if (hpText) {
+        hpText.innerText = `HP:${hp}/${enemy.max_hp}`;
+      }
+
+      if (hpBar) {
+        hpBar.style.width = percent + "%";
+      }
+
+      // 「○○を倒した！」が出るまではグレーアウトしない。
+      // ただし、すでに倒した表示済みの敵はグレーアウトを維持する。
+      if (!defeatedEnemyIds.has(enemyId)) {
+        card.classList.remove("dead");
+      }
+    });
+  }
+
+
+
+  const oldTemp = lastPlayers.map(p => ({
+    ...p,
+    hp: oldHpMap[p.name] !== undefined ? oldHpMap[p.name] : p.hp
+  }));
+
+  const newTemp = lastPlayers.map(p => ({
+    ...p,
+    hp: state.players_hp[p.name]
+  }));
+
+  clearDamageFlash();
+
+  const damagedNames = [];
+
+  newTemp.forEach(p => {
+    if (
+      oldHpMap[p.name] !== undefined &&
+      p.hp < oldHpMap[p.name]
+    ) {
+      damagedNames.push(p.name);
+      damageFlashNames.add(p.name);
+    }
+  });
+
+  // ===== ダメージがある場合：先に赤点滅、その後にHPバーを同時に減らす =====
+  if (damagedNames.length > 0) {
+
+    playSound("damage");
+    triggerScreenShake("medium");
+
+    // まずは旧HPのまま赤く光らせる
+    renderPlayers(oldTemp, true);
+
+    setTimeout(() => {
+      // 少し遅れて新HPを同時反映する
+      renderPlayers(newTemp, true);
+
+      previousHpMap = {};
+      newTemp.forEach(p => {
+        previousHpMap[p.name] = p.hp;
+      });
+
+      damageFlashTimer = setTimeout(() => {
+        damageFlashNames.clear();
+        renderPlayers(newTemp, true);
+        damageFlashTimer = null;
+      }, 900);
+
+    }, 350);
+
+    return;
+  }
+
+  // ===== ダメージがない場合は通常更新 =====
+  previousHpMap = {};
+  newTemp.forEach(p => {
+    previousHpMap[p.name] = p.hp;
+  });
+
+  renderPlayers(newTemp, true);
+}
+
+/* ===== M-2セクション：点滅解除処理 ===== */
+function clearDamageFlash() {
+  if (damageFlashTimer) {
+    clearTimeout(damageFlashTimer);
+    damageFlashTimer = null;
+  }
+
+  damageFlashNames.clear();
+}
+
+
+function getMagicEffectColors(element) {
+  const colorMap = {
+    fire: {
+      color: "#ff3b30",
+      strong: "rgba(255,59,48,0.95)",
+      solid: "rgba(255,59,48,1)",
+      soft: "rgba(255,120,80,0.9)"
+    },
+    ice: {
+      color: "#66d9ff",
+      strong: "rgba(102,217,255,0.95)",
+      solid: "rgba(102,217,255,1)",
+      soft: "rgba(150,235,255,0.9)"
+    },
+    wind: {
+      color: "#4ade80",
+      strong: "rgba(74,222,128,0.95)",
+      solid: "rgba(74,222,128,1)",
+      soft: "rgba(134,239,172,0.9)"
+    },
+    thunder: {
+      color: "#ffd700",
+      strong: "rgba(255,215,0,0.95)",
+      solid: "rgba(255,215,0,1)",
+      soft: "rgba(255,235,120,0.9)"
+    },
+    light: {
+      color: "#ffffff",
+      strong: "rgba(255,255,255,0.95)",
+      solid: "rgba(255,255,255,1)",
+      soft: "rgba(255,255,255,0.9)"
+    },
+    dark: {
+      color: "#b266ff",
+      strong: "rgba(178,102,255,0.95)",
+      solid: "rgba(178,102,255,1)",
+      soft: "rgba(210,160,255,0.9)"
+    }
+  };
+
+  return colorMap[element] || colorMap.light;
+}
+
+
+function getPhysicalEffectColors(element) {
+  const colorMap = {
+    fire: {
+      strong: "rgba(255,70,45,0.95)",
+      solid: "rgba(255,60,40,1)",
+      soft: "rgba(255,130,70,0.9)"
+    },
+    ice: {
+      strong: "rgba(180,245,255,0.95)",
+      solid: "rgba(90,220,255,1)",
+      soft: "rgba(150,235,255,0.9)"
+    },
+    wind: {
+      strong: "rgba(180,255,210,0.95)",
+      solid: "rgba(70,230,130,1)",
+      soft: "rgba(130,245,170,0.9)"
+    },
+    thunder: {
+      strong: "rgba(255,245,150,0.98)",
+      solid: "rgba(255,215,0,1)",
+      soft: "rgba(255,235,90,0.95)"
+    },
+    light: {
+      strong: "rgba(255,255,255,0.98)",
+      solid: "rgba(255,255,255,1)",
+      soft: "rgba(255,255,220,0.95)"
+    },
+    dark: {
+      strong: "rgba(220,170,255,0.95)",
+      solid: "rgba(170,80,255,1)",
+      soft: "rgba(200,130,255,0.9)"
+    },
+    none: {
+      strong: "rgba(255,255,255,0.95)",
+      solid: "rgba(120,220,255,1)",
+      soft: "rgba(120,220,255,0.9)"
+    }
+  };
+
+  return colorMap[element] || colorMap.none;
+}
+
+function flashBoss(enemyId=null, flashType='physical', flashElement='light') {
+  let effect = null;
+  let targetElement = null;
+
+  if (enemyId) {
+    const enemyCard = document.getElementById("enemy-" + enemyId);
+
+    if (enemyCard) {
+      targetElement = enemyCard;
+      effect = enemyCard.querySelector(".enemy-hit-effect");
+    }
+  }
+
+  if (!effect) {
+    const firstEnemy = document.querySelector(".enemy-card:not(.dead)");
+
+    if (firstEnemy) {
+      targetElement = firstEnemy;
+      effect = firstEnemy.querySelector(".enemy-hit-effect");
+    }
+  }
+
+  if (!targetElement || !effect) return;
+
+  clearBossFlashTarget(targetElement);
+
+  targetElement.classList.add("boss-damage-flash");
+
+  if (flashType === "magic") {
+    const magicColors = getMagicEffectColors(flashElement);
+
+    effect.style.setProperty("--magic-effect-color", magicColors.color);
+    effect.style.setProperty("--magic-effect-color-strong", magicColors.strong);
+    effect.style.setProperty("--magic-effect-color-solid", magicColors.solid);
+    effect.style.setProperty("--magic-effect-color-soft", magicColors.soft);
+
+    effect.innerHTML = `
+      <div class="magic-burst-effect"></div>
+      <div class="magic-sparkle-effect"></div>
+      <div class="magic-star-effect"></div>
+    `;
+  } else {
+    const physicalColors = getPhysicalEffectColors(flashElement);
+
+    effect.style.setProperty("--physical-effect-color-strong", physicalColors.strong);
+    effect.style.setProperty("--physical-effect-color-solid", physicalColors.solid);
+    effect.style.setProperty("--physical-effect-color-soft", physicalColors.soft);
+
+    effect.innerHTML = `
+      <div class="slash-effect"></div>
+      <div class="slash-effect second"></div>
+      <div class="slash-effect third"></div>
+    `;
+  }
+
+  const timerKey = targetElement.id || "single_enemy";
+
+  bossFlashTimers[timerKey] = setTimeout(() => {
+    targetElement.classList.remove("boss-damage-flash");
+    effect.innerHTML = "";
+    delete bossFlashTimers[timerKey];
+  }, 700);
+}
+
+function flashBossMany(enemyIds, flashType='physical', flashElement='light') {
+  if (!enemyIds || enemyIds.length === 0) return;
+
+  enemyIds.forEach(enemyId => {
+    flashBoss(enemyId, flashType, flashElement);
+  });
+}
+
+function clearBossFlashTarget(targetElement) {
+  if (!targetElement) return;
+
+  const timerKey = targetElement.id || "single_enemy";
+
+  if (bossFlashTimers[timerKey]) {
+    clearTimeout(bossFlashTimers[timerKey]);
+    delete bossFlashTimers[timerKey];
+  }
+
+  targetElement.classList.remove("boss-damage-flash");
+
+  const effect = targetElement.querySelector(".enemy-hit-effect");
+  if (effect) {
+    effect.innerHTML = "";
+    effect.style.removeProperty("--magic-effect-color");
+    effect.style.removeProperty("--magic-effect-color-strong");
+    effect.style.removeProperty("--magic-effect-color-solid");
+    effect.style.removeProperty("--magic-effect-color-soft");
+    effect.style.removeProperty("--physical-effect-color-strong");
+    effect.style.removeProperty("--physical-effect-color-solid");
+    effect.style.removeProperty("--physical-effect-color-soft");
+  }
+}
+
+function clearBossFlash() {
+  if (bossFlashTimer) {
+    clearTimeout(bossFlashTimer);
+    bossFlashTimer = null;
+  }
+
+  Object.keys(bossFlashTimers).forEach(timerKey => {
+    clearTimeout(bossFlashTimers[timerKey]);
+  });
+  bossFlashTimers = {};
+
+  document.querySelectorAll(".enemy-card").forEach(card => {
+    card.classList.remove("boss-damage-flash");
+  });
+
+  document.querySelectorAll(".enemy-hit-effect").forEach(effect => {
+    effect.innerHTML = "";
+    effect.style.removeProperty("--magic-effect-color");
+    effect.style.removeProperty("--magic-effect-color-strong");
+    effect.style.removeProperty("--magic-effect-color-solid");
+    effect.style.removeProperty("--magic-effect-color-soft");
+    effect.style.removeProperty("--physical-effect-color-strong");
+    effect.style.removeProperty("--physical-effect-color-solid");
+    effect.style.removeProperty("--physical-effect-color-soft");
+  });
+}
+
+
+/* ===== N-0セクション：接続維持処理 ===== */
+async function sendHeartbeat() {
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+
+  try {
+    await fetch("/heartbeat", {
+      method: "POST",
+      body: fd
+    });
+  } catch (e) {
+    // 通信失敗時は何もしない
+  }
+}
+
+
+/* ===== Nセクション：画面更新 ===== */
+function hasMyActionOnServer(data) {
+  return Boolean(
+    data &&
+    data.actions &&
+    Object.prototype.hasOwnProperty.call(data.actions, myName)
+  );
+}
+
+function syncPreviousHpFromData(data) {
+  if (!data) return;
+
+  previousHpMap = {};
+  (data.players || []).forEach(p => {
+    previousHpMap[p.name] = p.hp;
+  });
+
+  previousBossHp = data.boss_hp;
+
+  previousEnemiesHpMap = {};
+  (data.enemies || []).forEach(e => {
+    previousEnemiesHpMap[e.id] = e.hp;
+  });
+}
+
+function rememberDefeatedEnemies(data) {
+  (data.enemies || []).forEach(e => {
+    if (e.hp <= 0) {
+      defeatedEnemyIds.add(e.id);
+    }
+  });
+}
+
+function handlePageTransition(data) {
+  if (leavingBattle) {
+    return true;
+  }
+
+  // ===== 念のため：旧版の再戦ジョブ選択モードが残っていた場合だけジョブ選択へ移動 =====
+  if (data.rematch_select) {
+    window.location.href = "/character_select?room_id=" + encodeURIComponent(roomId);
+    return true;
+  }
+
+  if (data.viewer_blocked) {
+    stopAllMusic();
+    alert("投票によりパーティーから退出しました。1時間は再参加できません。");
+    location.href = "/";
+    return true;
+  }
+
+  if (data.viewer_removed) {
+    stopAllMusic();
+    alert("パーティーから退出しました。");
+    location.href = "/";
+    return true;
+  }
+
+  if (!data.started && data.phase === "waiting") {
+    stopAllMusic();
+    location.href = "/lobby?name=" + encodeURIComponent(myName) + "&room_id=" + encodeURIComponent(roomId);
+    return true;
+  }
+
+  const myPlayerStillExists =
+    data.players && data.players.some(p => p.name === myName);
+
+  if (!myPlayerStillExists) {
+    stopAllMusic();
+    location.href = "/";
+    return true;
+  }
+
+  return false;
+}
+
+function syncBattleFlags(data) {
+  lastBattleData = data;
+  currentBossMax = data.boss_max_hp;
+  switchBattleBgmByRoomName(data.room_name);
+  lastPlayers = data.players || [];
+
+  rememberDefeatedEnemies(data);
+
+  if (Object.keys(previousEnemiesHpMap).length === 0 && data.enemies) {
+    data.enemies.forEach(e => {
+      previousEnemiesHpMap[e.id] = e.hp;
+    });
+  }
+
+  if (Object.keys(previousHpMap).length === 0) {
+    (data.players || []).forEach(p => {
+      previousHpMap[p.name] = p.hp;
+    });
+  }
+
+  // ===== 再戦検出：全端末で勝利/敗北BGMから戦闘BGMへ戻す =====
+  if (previousPhase === "end" && data.phase === "choice") {
+    battleEnded = false;
+    victoryPlayed = false;
+    victoryBgmPlayed = false;
+    rematchInProgress = false;
+    actionSubmitted = false;
+    selectingTarget = null;
+    selectingWeaponAction = null;
+    selectingShieldAction = false;
+    selectingSkillAction = false;
+    selectingSkillKind = "attack";
+    selectedWeaponId = "";
+    selectedShieldId = "";
+    defeatedEnemyIds.clear();
+    lastEnemiesRenderKey = "";
+
+    victoryBgm.pause();
+    victoryBgm.currentTime = 0;
+
+    defeatBgm.pause();
+    defeatBgm.currentTime = 0;
+
+    battleBgm.currentTime = 0;
+    battleBgm.play().catch(() => {});
+  }
+
+  previousPhase = data.phase;
+
+  let displayTurn = data.turn;
+
+  if (isPlayingEvent) {
+      displayTurn = Math.max(1, data.turn - 1);
+  }
+
+  document.getElementById("turn").innerText = displayTurn;
+
+  if (data.turn !== lastTurn) {
+    actionSubmitted = false;
+    selectingTarget = null;
+    selectingWeaponAction = null;
+    selectingShieldAction = false;
+    selectingSkillAction = false;
+    selectedWeaponId = "";
+    selectedShieldId = "";
+    selectedSkillId = "";
+    clearDamageFlash();
+    clearBossFlash();
+    lastTurn = data.turn;
+  }
+
+  // ===== サーバー側で行動が消えていたら、画面側の「行動済み」も解除する =====
+  // 一人プレイや通信タイミングのズレで、ローカルだけ待機状態が残るのを防ぐ。
+  if (data.phase === "choice" && !hasMyActionOnServer(data) && actionSubmitted) {
+    actionSubmitted = false;
+  }
+}
+
+function renderStableBattleScreen(data) {
+  updateBossDisplay(data);
+  renderPlayers(data.players || [], false);
+  syncPreviousHpFromData(data);
+}
+
+function renderBattleSubPanels(data) {
+  document.getElementById("logBox").innerHTML =
+    getVisibleBattleLogs(data.log || []).map(l => `<div>${l}</div>`).join("");
+
+  renderChat(data.chat_messages || [], data);
+  renderKickVote(data);
+}
+
+async function update() {
+  let data = null;
+
+  try {
+    const res = await fetch(`/state?name=${encodeURIComponent(myName)}&room_id=${encodeURIComponent(roomId)}`);
+    data = await res.json();
+  } catch (e) {
+    document.getElementById("actionStatus").innerText = "通信確認中...";
+    return;
+  }
+
+  if (handlePageTransition(data)) {
+    return;
+  }
+
+  syncBattleFlags(data);
+
+  const hasNewEvent = data.event_id !== lastEventId;
+
+  if (hasNewEvent) {
+    lastEventId = data.event_id;
+    playEvents(data.turn_events || []);
+  }
+
+  // ===== イベント中は最終状態を先に描画しない =====
+  if (!isPlayingEvent && !hasNewEvent) {
+    renderStableBattleScreen(data);
+  }
+
+  renderBattleSubPanels(data);
+
+  // ===== 操作UIは最後に描画する =====
+  // イベント中は renderMainPanel 内で「戦闘中...」だけを表示する。
+  renderMainPanel(data);
+}
+
+/* ===== Oセクション：ボス表示更新 ===== */
+function updateBossDisplay(data) {
+  document.getElementById("enemyTitle").innerText =
+    data.room_name || "敵";
+
+  document.getElementById("bossHpText").innerText =
+    `${data.boss_hp} / ${data.boss_max_hp}`;
+
+  const bossPercent = data.boss_max_hp > 0 ? (data.boss_hp / data.boss_max_hp) * 100 : 0;
+  document.getElementById("bossBar").style.width = bossPercent + "%";
+
+  renderEnemies(data.enemies || [], false);
+}
+
+function renderEnemies(enemies, force=false) {
+  const area = document.getElementById("enemiesArea");
+
+  if (!area) return;
+
+  const renderKey = enemies.map(e =>
+    `${e.id}:${e.name}:${e.hp}:${e.max_hp}:${e.image}:${defeatedEnemyIds.has(e.id)}`
+  ).join("|");
+
+  // ===== 同じ内容なら敵表示を作り直さない =====
+  if (!force && renderKey === lastEnemiesRenderKey) {
+    return;
+  }
+
+  lastEnemiesRenderKey = renderKey;
+
+  const grid = document.createElement("div");
+  grid.className = "enemies-grid";
+
+  enemies.forEach(enemy => {
+    const card = document.createElement("div");
+    card.className = "enemy-card" + ((enemy.hp <= 0 || defeatedEnemyIds.has(enemy.id)) ? " dead" : "");
+    card.onclick = () => {
+      if ((selectingTarget === "enemy_attack" || selectingTarget === "skill_enemy_attack") && enemy.hp > 0) {
+        selectEnemyTarget(enemy.id);
+      }
+    };
+    card.id = "enemy-" + enemy.id;
+
+    const percent = enemy.max_hp > 0 ? (enemy.hp / enemy.max_hp) * 100 : 0;
+
+    card.innerHTML = `
+      <div class="boss-hit-effect enemy-hit-effect"></div>
+      <div class="enemy-name">${enemy.name}</div>
+      <img class="enemy-image" src="${enemy.image}" alt="${enemy.name}">
+      <div class="enemy-hp-text">HP:${enemy.hp}/${enemy.max_hp}</div>
+      <div class="enemy-bar-wrap">
+        <div class="enemy-bar" style="width:${percent}%"></div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  area.innerHTML = "";
+  area.appendChild(grid);
+}
+
+/* ===== Pセクション：メインパネル切り替え ===== */
+function renderMainPanel(data) {
+  const panel = document.getElementById("mainPanel");
+  const status = document.getElementById("actionStatus");
+
+  const me = data.players.find(p => p.name === myName);
+  const meAlive = me && me.hp > 0;
+
+  status.innerText = "";
+
+  if (isPlayingEvent) {
+    status.innerText = "戦闘中...";
+    return;
+  }
+
+
+
+
+  if (data.phase === "end") {
+    actionSubmitted = false;
+    selectingTarget = null;
+
+    if (data.winner === "players" && data.raid_reward_available) {
+      renderRaidRewardPanel(data);
+      return;
+    }
+
+    if (data.host_name === myName) {
+      panel.innerHTML = `
+        <div class="actions">
+          <button class="rematch-btn" onclick="rematch()">再戦</button>
+          <button class="end-btn" onclick="finishBattle()">ロビーに戻る</button>
+        </div>
+      `;
+    } else {
+      panel.innerText = "最初の参加者の選択待ち";
+    }
+
+    return;
+  }
+
+
+
+
+  if (!meAlive) {
+    panel.innerText = "仲間の行動を見守ろう";
+    status.innerText = "あなたは倒れています";
+    return;
+  }
+
+  const serverActionSubmitted = hasMyActionOnServer(data);
+
+  // ===== 待機表示はサーバーに自分の行動が残っている時だけ優先する =====
+  // actionSubmitted は押した直後の一時表示用。サーバーで行動が消えていたら解除する。
+  if (serverActionSubmitted) {
+    panel.innerText = "全員の行動を待っています";
+    status.innerText = "行動済み";
+    return;
+  }
+
+  if (actionSubmitted && isPlayingEvent) {
+    panel.innerText = "全員の行動を待っています";
+    status.innerText = "行動済み";
+    return;
+  }
+
+  if (actionSubmitted && !serverActionSubmitted) {
+    actionSubmitted = false;
+  }
+
+  if (selectingWeaponAction) {
+    showWeaponSelect(selectingWeaponAction);
+    return;
+  }
+
+  if (selectingShieldAction) {
+    showShieldSelect();
+    return;
+  }
+
+  if (selectingSkillAction) {
+    showSkillSelect(selectingSkillKind);
+    return;
+  }
+
+  if (selectingTarget === "enemy_attack" || selectingTarget === "skill_enemy_attack") {
+    panel.innerHTML = `
+      <div>
+        攻撃対象を選択してください<br>
+        <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+      </div>
+    `;
+
+    status.innerText = selectingTarget === "skill_enemy_attack" ? "魔法を当てたい敵の絵をタップしてください" : "攻撃したい敵の絵をタップしてください";
+    return;
+  }
+
+  if (selectingTarget === "heal") {
+    panel.innerHTML = `
+      <div>
+        回復対象を選択してください<br>
+        <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+      </div>
+    `;
+    status.innerText = "回復したいメンバーの枠をタップしてください";
+    renderPlayers(data.players, false);
+    return;
+  }
+
+  if (selectingTarget === "guard") {
+    panel.innerHTML = `
+      <div>
+        対象を選択してください<br>
+        <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+      </div>
+    `;
+    status.innerText = "対象の枠をタップしてください";
+    renderPlayers(data.players, false);
+    return;
+  }
+
+  if (selectingTarget === "reflect") {
+    panel.innerHTML = `
+      <div>
+        リフレクトの対象者を選んでください<br>
+        <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+      </div>
+    `;
+    status.innerText = "リフレクトをかけたいメンバーの枠をタップしてください";
+    renderPlayers(data.players, false);
+    return;
+  }
+
+  let buttonsHtml = "";
+
+  if (me.job === "勇者") {
+    buttonsHtml = `
+      <button class="attack-btn" onclick="showWeaponSelect('attack')">攻撃</button>
+      <button class="heal-btn" onclick="startHealSelect()">選択回復</button>
+      <button class="heal-btn" onclick="sendAction('heal_all')">全体回復</button>
+    `;
+  } else if (me.job === "タンク") {
+    buttonsHtml = `
+      <button class="attack-btn" onclick="showWeaponSelect('attack')">攻撃</button>
+      <button class="guard-btn" onclick="showShieldSelect()">シールド（挑発）</button>
+      <button class="heal-btn" onclick="startHealSelect()">選択回復</button>
+    `;
+  } else if (me.job === "魔術師") {
+    const carriedSkills = me.carried_skills || [];
+    const hasSupportSkill = carriedSkills.some(skill => skill.type === "support");
+    const supportButtonClass = hasSupportSkill ? "guard-btn" : "guard-btn disabled-action-btn";
+    const supportButtonDisabled = hasSupportSkill ? "" : "disabled";
+
+    buttonsHtml = `
+      <button class="attack-btn" onclick="showSkillSelect('attack')">攻撃魔法</button>
+      <button class="${supportButtonClass}" ${supportButtonDisabled} onclick="showSkillSelect('support')">支援魔法</button>
+      <button class="heal-btn" onclick="startHealSelect()">選択回復</button>
+      <button class="heal-btn" onclick="sendAction('heal_all')">全体回復</button>
+    `;
+  } else {
+    buttonsHtml = `
+      <button class="attack-btn" onclick="showWeaponSelect('attack')">攻撃</button>
+    `;
+  }
+
+  panel.innerHTML = `
+    <div class="actions">
+      ${buttonsHtml}
+    </div>
+  `;
+
+  status.innerText = "行動を選択してください";
+}
+
+
+/* ===== P-2セクション：レイド報酬選択 ===== */
+function getRewardKindText(kind) {
+  if (kind === "weapon") return "武器";
+  if (kind === "shield") return "盾";
+  if (kind === "skill") return "魔法";
+  return "報酬";
+}
+
+function renderRaidRewardPanel(data) {
+  const panel = document.getElementById("mainPanel");
+  const status = document.getElementById("actionStatus");
+
+  const rewards = data.raid_reward_candidates || [];
+
+  if (data.raid_reward_claimed) {
+    panel.innerHTML = `
+      <div style="width:100%;">
+        <div style="color:#ffd54f; font-size:20px; margin-bottom:12px;">
+          レイド報酬を獲得しました！
+        </div>
+        <button class="end-btn" onclick="location.href='/'">ロビーへ戻る</button>
+      </div>
+    `;
+    status.innerText = "報酬受け取り済みです";
+    return;
+  }
+
+  if (rewards.length === 0) {
+    panel.innerHTML = `
+      <div style="width:100%;">
+        <div style="color:#ffd54f; font-size:20px; margin-bottom:12px;">
+          レイド勝利！
+        </div>
+        <div style="font-size:14px; color:#ddd; line-height:1.6; margin-bottom:12px;">
+          受け取れるレイド報酬がありません。
+        </div>
+        <button class="end-btn" onclick="location.href='/'">ロビーへ戻る</button>
+      </div>
+    `;
+    status.innerText = "すべて取得済みです";
+    return;
+  }
+
+  let html = `
+    <div style="width:100%;">
+      <div style="color:#ffd54f; font-size:20px; margin-bottom:8px;">
+        レイド報酬を1つ選んでください
+      </div>
+      <div style="font-size:13px; color:#ddd; line-height:1.5; margin-bottom:12px;">
+        すでに持っている報酬はグレー表示され、選択できません。<br>
+        ※レイド報酬の武器は勇者とタンクで共有です。取得すると、勇者・タンクの両方が装備可能になります。
+      </div> 
+      <div class="raid-reward-list">
+  `;
+
+  rewards.forEach(reward => {
+    const owned = reward.owned;
+    const imageHtml = reward.image
+      ? `<img class="raid-reward-img" src="${escapeHtml(reward.image)}" alt="${escapeHtml(reward.name)}" onerror="this.style.display='none';">`
+      : `<div class="raid-reward-img"></div>`;
+
+    html += `
+      <div class="raid-reward-card ${owned ? "owned" : ""}">
+        <div class="raid-reward-row">
+          ${imageHtml}
+          <div>
+            <div class="raid-reward-kind">${getRewardKindText(reward.kind)}</div>
+            <div class="raid-reward-name">${escapeHtml(reward.name)}</div>
+            <div class="raid-reward-desc">${escapeHtml(reward.description || "")}</div>
+          </div>
+        </div>
+
+        <button
+          class="raid-reward-btn"
+          ${owned ? "disabled" : ""}
+          onclick="claimRaidReward('${escapeHtml(reward.kind)}', '${escapeHtml(reward.id)}', '${escapeHtml(reward.name)}')"
+        >
+          ${owned ? "取得済み" : "この報酬を獲得する"}
+        </button>
+      </div>
+    `;
+  });
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  panel.innerHTML = html;
+  status.innerText = "レイド報酬を選択してください";
+}
+
+async function claimRaidReward(kind, rewardId, rewardName) {
+  if (!confirm(`${rewardName}を獲得しますか？`)) {
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("kind", kind);
+  fd.append("reward_id", rewardId);
+
+  try {
+    const res = await fetch("/claim_raid_reward", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      alert(data.message || "レイド報酬を獲得しました！");
+
+      window.location.href =
+        "/lobby?name=" + encodeURIComponent(myName) +
+        "&room_id=" + encodeURIComponent(roomId);
+     
+      return;
+    }
+
+    alert(data.message || "報酬を獲得できませんでした");
+    update();
+
+  } catch (e) {
+    alert("通信エラーで報酬を獲得できませんでした");
+  }
+}
+
+
+
+/* ===== Qセクション：対象選択処理 ===== */
+function startHealSelect() {
+  unlockSounds();
+  startBattleBgm();
+
+  if (isPlayingEvent) return;
+
+  selectingWeaponAction = null;
+  selectedWeaponId = "";
+  selectingTarget = "heal";
+
+  const players =
+    lastBattleData && lastBattleData.players
+      ? lastBattleData.players
+      : lastPlayers;
+
+  renderPlayers(players, false);
+
+  document.getElementById("mainPanel").innerHTML = `
+    <div>
+      回復対象を選択してください<br>
+      <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+    </div>
+  `;
+
+  document.getElementById("actionStatus").innerText =
+    "回復したいメンバーの枠をタップしてください";
+}
+
+function startGuardSelect() {
+  unlockSounds();
+  startBattleBgm();
+
+  if (isPlayingEvent) return;
+
+  selectingTarget = "guard";
+  renderPlayers(lastPlayers, false);
+
+  document.getElementById("mainPanel").innerHTML = `
+    <div>
+      対象を選択してください<br>
+      <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+    </div>
+  `;
+
+  document.getElementById("actionStatus").innerText =
+    "対象の枠をタップしてください";
+}
+
+function cancelTargetSelect() {
+  selectingTarget = null;
+  selectedEnemyTarget = null;
+  selectedWeaponId = "";
+  selectedShieldId = "";
+  selectedSkillId = "";
+  selectingWeaponAction = null;
+  selectingShieldAction = false;
+  selectingSkillAction = false;
+  selectingSkillKind = "attack";
+
+  if (lastBattleData) {
+    renderMainPanel(lastBattleData);
+  }
+}
+
+
+
+/* ===== Q-2セクション：攻撃時の武器選択 ===== */
+function showWeaponSelect(actionType) {
+  unlockSounds();
+  startBattleBgm();
+
+  if (isPlayingEvent) return;
+
+  selectingTarget = null;
+  selectingWeaponAction = actionType;
+
+  const panel = document.getElementById("mainPanel");
+  const status = document.getElementById("actionStatus");
+
+  const myPlayer =
+    lastBattleData && lastBattleData.players
+      ? lastBattleData.players.find(p => p.name === myName)
+      : null;
+
+  const weapons =
+    myPlayer && myPlayer.carried_weapons
+      ? myPlayer.carried_weapons
+      : [];
+
+  let buttonsHtml = "";
+
+  if (weapons.length === 0) {
+    buttonsHtml += `
+      <button type="button" class="cancel-btn" style="width:100%; min-width:0;"
+        onclick="selectWeaponForAction('${actionType}', '')">
+        武器なし
+      </button>
+    `;
+  } else {
+    weapons.forEach(w => {
+      buttonsHtml += `
+        <button type="button" class="attack-btn" style="width:100%; min-width:0;"
+          onclick="selectWeaponForAction('${actionType}', '${w.id}')">
+          ${w.name}
+        </button>
+      `;
+    });
+  }
+
+  panel.innerHTML = `
+    <div style="width:100%; display:flex; flex-direction:column; gap:12px; align-items:stretch;">
+      <div style="margin-bottom:4px; color:#ffd54f; font-weight:bold; font-size:18px; text-align:center;">
+        使用武器を選択してください
+      </div>
+
+      ${buttonsHtml}
+
+      <button type="button" class="guard-btn" style="width:100%; min-width:0;" onclick="cancelWeaponSelect()">
+        戻る
+      </button>
+    </div>
+  `;
+
+  status.innerText = "今回の攻撃に使う武器を選択してください";
+}
+
+function selectWeaponForAction(actionType, weaponId) {
+  selectedWeaponId = weaponId || "";
+  selectingWeaponAction = null;
+
+  // ===== 全体攻撃武器は敵選択なし =====
+  if (actionType === "attack" && ["tempest", "laser_blade", "flamethrower", "emp_generator", "homing_missile"].includes(selectedWeaponId)) {
+    selectedEnemyTarget = "";
+    selectingTarget = null;
+    document.getElementById("mainPanel").innerText = "行動を送信中...";
+    document.getElementById("actionStatus").innerText = "全体攻撃を送信しています";
+    sendAction("attack");
+    return;
+  }
+
+  if (actionType === "attack") {
+    startEnemyAttackSelect();
+    return;
+  }
+
+  sendAction(actionType);
+}
+
+function cancelWeaponSelect() {
+  selectedWeaponId = "";
+  selectingWeaponAction = null;
+  selectingTarget = null;
+
+  if (lastBattleData) {
+    renderMainPanel(lastBattleData);
+  }
+}
+
+
+
+/* ===== Q-4セクション：魔術師の魔法選択 ===== */
+function showSkillSelect(skillKind = "attack") {
+  unlockSounds();
+  startBattleBgm();
+
+  if (isPlayingEvent) return;
+
+  selectingSkillKind = skillKind;
+  selectingTarget = null;
+  selectingWeaponAction = null;
+  selectingShieldAction = false;
+  // ===== 魔法選択中フラグをONにして、定期更新で通常ボタンに戻らないようにする =====
+  selectingSkillAction = true;
+
+  const panel = document.getElementById("mainPanel");
+  const status = document.getElementById("actionStatus");
+
+  const myPlayer =
+    lastBattleData && lastBattleData.players
+      ? lastBattleData.players.find(p => p.name === myName)
+      : null;
+
+  const allSkills =
+    myPlayer && myPlayer.carried_skills
+      ? myPlayer.carried_skills
+      : [];
+
+  const skills = allSkills.filter(skill => {
+    if (skillKind === "support") {
+      return skill.type === "support";
+    }
+
+    return skill.type === "attack";
+  });
+
+  const titleText = skillKind === "support" ? "使用する支援魔法を選択してください" : "使用する攻撃魔法を選択してください";
+  const emptyText = skillKind === "support"
+    ? "この戦闘に持ち込んだ支援魔法がありません。"
+    : "この戦闘に持ち込んだ攻撃魔法がありません。";
+
+  let buttonsHtml = "";
+
+  if (skills.length === 0) {
+    buttonsHtml = `
+      <div style="color:#ccc; line-height:1.6;">
+        ${emptyText}<br>
+        ロビー前の魔法選択で持ち込み魔法を変更できます。
+      </div>
+    `;
+  } else {
+    skills.forEach(skill => {
+      const isSupport = skill.type === "support";
+      const buttonClass = isSupport ? "guard-btn" : "attack-btn";
+      const detail = makeSkillDetailText(skill);
+
+      buttonsHtml += `
+        <button type="button" class="${buttonClass}" style="width:100%; min-width:0; text-align:left;"
+          onclick="selectSkillForAction('${skill.id}')">
+          ${escapeHtml(skill.name)}<br>
+          <span style="font-size:12px; font-weight:normal;">${escapeHtml(detail)}</span>
+        </button>
+      `;
+    });
+  }
+
+  panel.innerHTML = `
+    <div style="width:100%; display:flex; flex-direction:column; gap:12px; align-items:stretch;">
+      <div style="margin-bottom:4px; color:#ce93d8; font-weight:bold; font-size:18px; text-align:center;">
+        ${titleText}
+      </div>
+
+      ${buttonsHtml}
+
+      <button type="button" class="cancel-btn" style="width:100%; min-width:0;" onclick="cancelTargetSelect()">
+        戻る
+      </button>
+    </div>
+  `;
+
+  status.innerText = skillKind === "support" ? "このターンに使う支援魔法を選択してください" : "このターンに使う攻撃魔法を選択してください";
+}
+
+function makeSkillDetailText(skill) {
+  if (!skill) return "";
+
+  if (skill.type === "support") {
+    return skill.description || "支援魔法";
+  }
+
+  const elementNames = {
+    fire: "炎",
+    ice: "氷",
+    thunder: "雷",
+    wind: "風",
+    light: "光",
+    dark: "闇",
+    none: "無"
+  };
+
+  const targetText = skill.target_type === "all"
+    ? "敵全体"
+    : "敵単体";
+
+  const elementText =
+    elementNames[skill.element] ||
+    skill.element ||
+    "無";
+
+  const powerRate =
+    skill.power_rate !== undefined
+      ? skill.power_rate
+      : "?";
+
+  return `${elementText}属性 / ${targetText} / 魔力×${powerRate}`;
+}
+
+
+
+function selectSkillForAction(skillId) {
+  selectedSkillId = skillId || "";
+  selectingSkillAction = false;
+
+  const myPlayer =
+    lastBattleData && lastBattleData.players
+      ? lastBattleData.players.find(p => p.name === myName)
+      : null;
+
+  const skills = myPlayer && myPlayer.carried_skills ? myPlayer.carried_skills : [];
+  const skill = skills.find(s => s.id === selectedSkillId);
+
+  if (!skill) {
+    alert("この魔法は使用できません");
+    selectedSkillId = "";
+    return;
+  }
+
+if (skill.type === "support") {
+
+    // リフレクトだけは対象選択
+    if (skill.id === "reflect") {
+        selectingTarget = "reflect";
+
+        renderPlayers(lastPlayers, false);
+
+        document.getElementById("mainPanel").innerHTML = `
+          <div>
+            リフレクト対象を選択してください<br>
+            <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+          </div>
+        `;
+
+        document.getElementById("actionStatus").innerText =
+          "リフレクトをかけたいメンバーをタップしてください";
+
+        return;
+    }
+
+    document.getElementById("mainPanel").innerText = "魔法を送信中...";
+    document.getElementById("actionStatus").innerText = `${skill.name}を送信しています`;
+    sendAction("skill");
+    return;
+}
+
+
+  if (skill.target_type === "all") {
+    selectedEnemyTarget = "";
+    selectingTarget = null;
+    document.getElementById("mainPanel").innerText = "魔法を送信中...";
+    document.getElementById("actionStatus").innerText = `${skill.name}を送信しています`;
+    sendAction("skill");
+    return;
+  }
+
+  startSkillEnemySelect();
+}
+
+function startSkillEnemySelect() {
+  if (isPlayingEvent) return;
+
+  const enemies =
+    lastBattleData && lastBattleData.enemies
+      ? lastBattleData.enemies.filter(e => e.hp > 0)
+      : [];
+
+  if (enemies.length <= 1) {
+    if (enemies.length === 1) {
+      selectedEnemyTarget = enemies[0].id;
+    }
+
+    document.getElementById("mainPanel").innerText = "魔法を送信中...";
+    document.getElementById("actionStatus").innerText = "魔法を送信しています";
+    sendAction("skill");
+    return;
+  }
+
+  selectingTarget = "skill_enemy_attack";
+  selectedEnemyTarget = null;
+
+  document.getElementById("mainPanel").innerHTML = `
+    <div>
+      魔法の対象を選択してください<br>
+      <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+    </div>
+  `;
+
+  document.getElementById("actionStatus").innerText = "魔法を当てたい敵の絵をタップしてください";
+}
+
+
+/* ===== R-0セクション：チャット処理 ===== */
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderChat(messages, data) {
+  const chatBox = document.getElementById("chatBox");
+  const chatInput = document.getElementById("chatInput");
+  const chatSendBtn = document.getElementById("chatSendBtn");
+  const chatNote = document.getElementById("chatNote");
+
+  if (!chatBox || !chatInput || !chatSendBtn || !chatNote) return;
+
+  const latest = messages.slice(-8);
+
+  chatBox.innerHTML = latest.map(m => `
+    <div class="chat-message">
+      <span class="chat-name">${escapeHtml(m.name)}：</span>
+      <span>${escapeHtml(m.message)}</span>
+    </div>
+  `).join("");
+
+  const newestId = messages.length > 0 ? messages[messages.length - 1].id : -1;
+
+  if (newestId !== lastChatId) {
+    lastChatId = newestId;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // ===== 戦闘中・演出中・勝敗後もチャット可能 =====
+  const canChat =
+    data.phase !== "waiting";
+
+  chatInput.disabled = !canChat;
+  chatSendBtn.disabled = !canChat;
+
+  if (canChat) {
+    chatNote.innerText = "チャットできます。";
+  } else {
+    chatNote.innerText = "戦闘開始待ちです。";
+  }
+}
+
+async function sendChat() {
+  const chatInput = document.getElementById("chatInput");
+
+  if (!chatInput) return;
+
+  const message = chatInput.value.trim();
+
+  if (!message) return;
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("message", message);
+
+  const res = await fetch("/send_chat", {
+    method: "POST",
+    body: fd
+  });
+
+  const data = await res.json();
+
+  if (data.ok) {
+    chatInput.value = "";
+    update();
+  } else if (data.message) {
+    alert(data.message);
+  }
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key !== "Enter") return;
+
+  const chatInput = document.getElementById("chatInput");
+
+  if (document.activeElement === chatInput) {
+    event.preventDefault();
+    sendChat();
+  }
+});
+
+
+/* ===== Rセクション：API通信 ===== */
+function startEnemyAttackSelect() {
+  unlockSounds();
+  startBattleBgm();
+
+  if (isPlayingEvent) return;
+
+  // ===== 魔術師の魔法攻撃では武器を使わない =====
+  const myPlayerForAttack =
+    lastBattleData && lastBattleData.players
+      ? lastBattleData.players.find(p => p.name === myName)
+      : null;
+
+  if (myPlayerForAttack && myPlayerForAttack.job === "魔術師") {
+    selectedWeaponId = "";
+    selectingWeaponAction = null;
+  }
+
+  selectingWeaponAction = null;
+
+  const enemies =
+    lastBattleData && lastBattleData.enemies
+      ? lastBattleData.enemies.filter(e => e.hp > 0)
+      : [];
+
+  // ===== 敵が1体だけなら自動で攻撃 =====
+  if (enemies.length <= 1) {
+    if (enemies.length === 1) {
+      selectedEnemyTarget = enemies[0].id;
+    }
+
+    document.getElementById("mainPanel").innerText = "行動を送信中...";
+    document.getElementById("actionStatus").innerText = "攻撃を送信しています";
+    sendAction("attack");
+    return;
+  }
+
+  // ===== 敵が複数なら対象選択 =====
+  selectingTarget = "enemy_attack";
+  selectedEnemyTarget = null;
+
+  const panel = document.getElementById("mainPanel");
+  const status = document.getElementById("actionStatus");
+
+  panel.innerHTML = `
+    <div>
+      攻撃対象を選択してください<br>
+      <button class="cancel-btn" onclick="cancelTargetSelect()">キャンセル</button>
+    </div>
+  `;
+
+  status.innerText = "攻撃したい敵の絵をタップしてください";
+}
+
+function selectEnemyTarget(enemyId) {
+  if (selectingTarget !== "enemy_attack" && selectingTarget !== "skill_enemy_attack") return;
+
+  const actionType = selectingTarget === "skill_enemy_attack" ? "skill" : "attack";
+  selectedEnemyTarget = enemyId;
+  sendAction(actionType);
+}
+
+async function sendAction(type, target=null) {
+  unlockSounds();
+  startBattleBgm();
+
+  if (isPlayingEvent) return;
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("action", type);
+
+  if (target) {
+    fd.append("target", target);
+  }
+
+  if ((type === "attack" || type === "skill") && selectedEnemyTarget) {
+    fd.append("enemy_target", selectedEnemyTarget);
+  }
+
+  if (type === "attack") {
+    fd.append("weapon_id", selectedWeaponId || "");
+  }
+
+  if (type === "shield") {
+    fd.append("shield_id", selectedShieldId || "");
+  }
+
+  if (type === "skill") {
+    fd.append("skill_id", selectedSkillId || "");
+  }
+
+  try {
+    const res = await fetch("/action", { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.ok) {
+      actionSubmitted = true;
+      selectingTarget = null;
+      selectingWeaponAction = null;
+      selectingShieldAction = false;
+      selectingSkillAction = false;
+      selectingSkillKind = "attack";
+      selectedEnemyTarget = null;
+      selectedWeaponId = "";
+      selectedShieldId = "";
+      selectedSkillId = "";
+      lastEnemiesRenderKey = "";
+      defeatedEnemyIds.clear();
+
+      document.getElementById("mainPanel").innerText = "全員の行動を待っています";
+      document.getElementById("actionStatus").innerText = "行動済み";
+
+      update();
+    } else if (data.message) {
+      alert(data.message);
+    } else {
+      alert("行動送信に失敗しました");
+    }
+  } catch (e) {
+    alert("通信エラーで行動を送信できませんでした");
+  }
+}
+
+async function rematch() {
+  unlockSounds();
+
+  rematchInProgress = true;
+
+  // 勝利・敗北BGMを確実に停止
+  victoryBgm.pause();
+  victoryBgm.currentTime = 0;
+
+  defeatBgm.pause();
+  defeatBgm.currentTime = 0;
+
+  battleBgm.pause();
+  battleBgm.currentTime = 0;
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+
+  const res = await fetch("/rematch", { method: "POST", body: fd });
+  const data = await res.json();
+
+  if (data.ok) {
+    battleEnded = false;
+    victoryPlayed = false;
+    actionSubmitted = false;
+    selectingTarget = null;
+
+    clearDamageFlash();
+    clearBossFlash();
+
+    // 再戦時は戦闘BGMを最初から流す
+    battleBgm.currentTime = 0;
+    battleBgm.play().catch(() => {});
+
+    lastEventId = -1;
+    lastTurn = 0;
+    previousPhase = null;
+    lastEnemiesRenderKey = "";
+    defeatedEnemyIds.clear();
+
+    update();
+
+  } else {
+    rematchInProgress = false;
+
+    if (data.message) {
+      alert(data.message);
+    }
+  }
+}
+
+async function finishBattle() {
+  unlockSounds();
+  stopAllMusic();
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+
+  const res = await fetch("/finish_battle", { method: "POST", body: fd });
+  const data = await res.json();
+
+  if (data.ok) {
+    // ===== サーバー側で waiting に戻ったことを、通常の定期更新処理で検知させる =====
+    // これにより、押した本人も他メンバーと同じ経路でロビーへ戻る。
+    update();
+  } else if (data.message) {
+    alert(data.message);
+  }
+}
+
+
+/* ===== R-2セクション：投票退出処理 ===== */
+function renderKickVote(data) {
+  const area = document.getElementById("kickVoteArea");
+  if (!area) return;
+
+  const players = data.players || [];
+  const kickVotes = data.kick_votes || {};
+
+  if (players.length < 3) {
+    area.innerHTML = `<div style="color:#ccc; font-size:13px;">3人以上のときに使用できます。</div>`;
+    return;
+  }
+
+  const myActiveTarget = kickVotes[myName] || "";
+
+  area.innerHTML = `
+    <div class="kick-vote-status">
+      追放したい相手をONにしてください。もう一度押すとOFFになります。<br>
+      対象者以外の全員が同じ人をONにすると追放されます。
+    </div>
+  `;
+
+  players.forEach(p => {
+    if (p.name === myName) return;
+
+    const targetName = p.name;
+    const isOn = myActiveTarget === targetName;
+
+    const btn = document.createElement("button");
+    btn.className = "kick-member-btn" + (isOn ? " kick-on" : "");
+    btn.type = "button";
+    btn.innerText = `${isOn ? "ON：" : "OFF："}${targetName}を退出`;
+    btn.onclick = () => voteKick(targetName);
+
+    area.appendChild(btn);
+  });
+}
+
+async function voteKick(targetName) {
+  const fd = new FormData();
+  fd.append("voter", myName);
+  fd.append("room_id", roomId);
+  fd.append("target", targetName);
+
+  try {
+    const res = await fetch("/vote_kick", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (!data.ok && data.message) {
+      alert(data.message);
+      return;
+    }
+
+    update();
+  } catch (e) {
+    alert("通信エラーで投票を送信できませんでした");
+  }
+}
+
+
+async function leaveParty() {
+  if (!confirm("パーティーから退出しますか？")) return;
+
+  leavingBattle = true;
+  stopAllMusic();
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+
+  const res = await fetch("/leave_party", {
+    method: "POST",
+    body: fd
+  });
+
+  const data = await res.json();
+
+  if (data.ok) {
+    location.href = "/";
+  } else if (data.message) {
+    alert(data.message);
+  }
+}
+
+/* ===== Sセクション：定期更新 ===== */
+setInterval(update, 500);
+setInterval(sendHeartbeat, 5000);
+sendHeartbeat();
+update();
+
+setTimeout(() => {
+  startBattleBgm();
+}, 500);
+
+
+/* ===== Q-3セクション：シールド時の盾選択 ===== */
+function showShieldSelect() {
+  unlockSounds();
+  startBattleBgm();
+
+  if (isPlayingEvent) return;
+
+  selectingTarget = null;
+  selectingWeaponAction = null;
+  selectingShieldAction = true;
+
+  const panel = document.getElementById("mainPanel");
+  const status = document.getElementById("actionStatus");
+
+  const myPlayer =
+    lastBattleData && lastBattleData.players
+      ? lastBattleData.players.find(p => p.name === myName)
+      : null;
+
+  const shields =
+    myPlayer && myPlayer.carried_shields
+      ? myPlayer.carried_shields
+      : [];
+
+  let buttonsHtml = "";
+
+  if (shields.length === 0) {
+    buttonsHtml += `
+      <button type="button" class="guard-btn" style="width:100%; min-width:0;" onclick="sendShieldAction('')">
+        通常シールド
+      </button>
+    `;
+  } else {
+    shields.forEach(s => {
+      const imagePath = s.image || `/static/images/shields/${s.id}.png`;
+      const effectText = s.effect_type || "効果未設定";
+
+      buttonsHtml += `
+        <button type="button" class="guard-btn battle-shield-btn" onclick="sendShieldAction('${s.id}')">
+          <img class="battle-shield-img" src="${imagePath}" alt="${s.name}" onerror="this.style.display='none';">
+          <span>
+            <span class="battle-shield-name">${s.name}</span>
+            <span class="battle-shield-meta">${effectText}</span>
+          </span>
+        </button>
+      `;
+    });
+  }
+
+  panel.innerHTML = `
+    <div style="width:100%; display:flex; flex-direction:column; gap:12px; align-items:stretch;">
+      <div style="margin-bottom:4px; color:#81d4fa; font-weight:bold; font-size:18px; text-align:center;">
+        使用する盾を選択してください
+      </div>
+
+      ${buttonsHtml}
+
+      <button type="button" class="cancel-btn" style="width:100%; min-width:0;" onclick="cancelTargetSelect()">
+        戻る
+      </button>
+    </div>
+  `;
+
+  status.innerText = "このターンに使う盾を選択してください";
+}
+
+function sendShieldAction(shieldId) {
+  selectedShieldId = shieldId || "";
+  selectingShieldAction = false;
+  sendAction("shield");
+}
+
+
+
+</script>
+
+</body>
+</html>

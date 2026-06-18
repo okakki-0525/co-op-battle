@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>開発者部屋</title>
+
+  <!-- ===== Aセクション：全体スタイル ===== -->
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #111;
+      color: white;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    .panel {
+      background: #202533;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+    }
+
+    h1, h2 {
+      margin-top: 0;
+    }
+
+    h1 {
+      color: #ffd54f;
+      text-align: center;
+    }
+
+    .small {
+      color: #ccc;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .status-box {
+      background: #111722;
+      border-radius: 10px;
+      padding: 12px;
+      line-height: 1.8;
+      color: #ddd;
+      margin-bottom: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    label {
+      color: #ffecb3;
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 11px;
+      font-size: 17px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    button {
+      flex: 1;
+      min-width: 160px;
+      padding: 14px;
+      font-size: 17px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .save-btn {
+      background: #e53935;
+    }
+
+    .reload-btn {
+      background: #3949ab;
+    }
+
+    .back-btn {
+      background: #546e7a;
+    }
+
+    .note {
+      margin-top: 10px;
+      min-height: 20px;
+      color: #b3e5fc;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .warning {
+      color: #ffcc00;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .player-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .player-card {
+      background: #111722;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid #3d4a63;
+      line-height: 1.7;
+    }
+
+    .player-card.offline {
+      opacity: 0.5;
+    }
+
+    .player-name {
+      font-weight: bold;
+      color: #ffd54f;
+    }
+
+    .player-meta {
+      color: #ddd;
+      font-size: 14px;
+    }
+
+    @media (max-width: 520px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===== Bセクション：画面構造 ===== -->
+<div class="container">
+
+  <div class="panel">
+    <h1>開発者部屋</h1>
+    <div class="small">
+      操作中：{{ my_name }}<br>
+      対象は「おかっきー」「アドミニ１」「アドミニ２」「アドミニ３」です。
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>ステータス調整</h2>
+
+    <div id="currentStatus" class="status-box">
+      読み込み中...
+    </div>
+
+    <div class="form-row">
+      <label for="targetSelect">対象</label>
+      <select id="targetSelect" onchange="selectTargetFromList()"></select>
+    </div>
+
+    <div class="form-row">
+      <label for="maxHpInput">HP</label>
+      <input id="maxHpInput" type="number" min="1" max="999" step="1" value="100">
+    </div>
+
+    <div class="form-row">
+      <label for="attackInput">ATK</label>
+      <input id="attackInput" type="number" min="1" max="99" step="1" value="10">
+    </div>
+
+    <div class="form-row">
+      <label for="magicInput">MAGIC</label>
+      <input id="magicInput" type="number" min="1" max="99" step="1" value="10">
+    </div>
+
+    <div class="warning">
+      ※ 現在ロビーまたは戦闘中のパーティーにいる対象だけ変更できます。<br>
+      ※ HPは最大HPとして設定し、現在HPはなるべく同じ割合で自動調整します。
+    </div>
+
+    <div class="button-row">
+      <button class="save-btn" type="button" onclick="saveStatus()">変更する</button>
+      <button class="reload-btn" type="button" onclick="loadStatus()">再読み込み</button>
+      <button class="back-btn" type="button" onclick="backToLobby()">ロビーへ戻る</button>
+    </div>
+
+    <div id="note" class="note"></div>
+  </div>
+
+  <div class="panel">
+    <h2>対象一覧</h2>
+    <div id="playerList" class="player-list"></div>
+  </div>
+
+</div>
+
+<!-- ===== Cセクション：JavaScript処理 ===== -->
+<script>
+const myName = {{ my_name|tojson }};
+const roomId = {{ room_id|tojson }};
+
+let developerPlayers = [];
+
+/* ===== Dセクション：表示更新 ===== */
+function clampNumber(value, minValue, maxValue) {
+  const number = parseInt(value, 10);
+
+  if (Number.isNaN(number)) {
+    return minValue;
+  }
+
+  return Math.max(minValue, Math.min(maxValue, number));
+}
+
+function getSelectedPlayer() {
+  const select = document.getElementById("targetSelect");
+  const targetName = select ? select.value : "";
+
+  return developerPlayers.find(player => player.name === targetName) || null;
+}
+
+function renderTargetSelect() {
+  const select = document.getElementById("targetSelect");
+  if (!select) return;
+
+  const beforeValue = select.value;
+  select.innerHTML = "";
+
+  developerPlayers.forEach(player => {
+    const option = document.createElement("option");
+    option.value = player.name;
+    option.textContent = player.in_party
+      ? `${player.name}（${player.job || "未設定"}）`
+      : `${player.name}（未参加）`;
+    select.appendChild(option);
+  });
+
+  if (beforeValue && developerPlayers.some(player => player.name === beforeValue)) {
+    select.value = beforeValue;
+  }
+}
+
+function renderCurrentStatus() {
+  const box = document.getElementById("currentStatus");
+  const player = getSelectedPlayer();
+
+  if (!box) return;
+
+  if (!player) {
+    box.innerText = "対象が見つかりません。";
+    return;
+  }
+
+  if (!player.in_party) {
+    box.innerHTML = `
+      <strong>${escapeHtml(player.name)}</strong><br>
+      現在この部屋に参加していません。
+    `;
+    return;
+  }
+
+  box.innerHTML = `
+    <strong>${escapeHtml(player.name)}</strong><br>
+    ジョブ：${escapeHtml(player.job || "未設定")}<br>
+    HP：${player.hp} / ${player.max_hp}<br>
+    ATK：${player.attack}<br>
+    MAGIC：${player.magic}
+  `;
+}
+
+function fillInputsFromSelected() {
+  const player = getSelectedPlayer();
+
+  if (!player || !player.in_party) {
+    return;
+  }
+
+  document.getElementById("maxHpInput").value = player.max_hp || 1;
+  document.getElementById("attackInput").value = player.attack || 1;
+  document.getElementById("magicInput").value = player.magic || 1;
+}
+
+function renderPlayerList() {
+  const area = document.getElementById("playerList");
+  if (!area) return;
+
+  area.innerHTML = "";
+
+  developerPlayers.forEach(player => {
+    const div = document.createElement("div");
+    div.className = "player-card" + (player.in_party ? "" : " offline");
+
+    if (player.in_party) {
+      div.innerHTML = `
+        <div class="player-name">${escapeHtml(player.name)}</div>
+        <div class="player-meta">
+          ジョブ：${escapeHtml(player.job || "未設定")}<br>
+          HP：${player.hp} / ${player.max_hp}　
+          ATK：${player.attack}　
+          MAGIC：${player.magic}
+        </div>
+      `;
+    } else {
+      div.innerHTML = `
+        <div class="player-name">${escapeHtml(player.name)}</div>
+        <div class="player-meta">未参加</div>
+      `;
+    }
+
+    area.appendChild(div);
+  });
+}
+
+function selectTargetFromList() {
+  renderCurrentStatus();
+  fillInputsFromSelected();
+}
+
+/* ===== Eセクション：API通信 ===== */
+async function loadStatus() {
+  const note = document.getElementById("note");
+  if (note) note.innerText = "読み込み中...";
+
+  try {
+    const res = await fetch(
+      "/developer_status?name=" +
+      encodeURIComponent(myName) +
+      "&room_id=" +
+      encodeURIComponent(roomId)
+    );
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      if (note) note.innerText = data.message || "読み込みに失敗しました。";
+      return;
+    }
+
+    developerPlayers = data.players || [];
+
+    renderTargetSelect();
+    renderCurrentStatus();
+    fillInputsFromSelected();
+    renderPlayerList();
+
+    if (note) note.innerText = "読み込みました。";
+  } catch (e) {
+    if (note) note.innerText = "通信エラーで読み込めませんでした。";
+  }
+}
+
+async function saveStatus() {
+  const note = document.getElementById("note");
+  const player = getSelectedPlayer();
+
+  if (!player) {
+    if (note) note.innerText = "対象を選択してください。";
+    return;
+  }
+
+  if (!player.in_party) {
+    if (note) note.innerText = "対象プレイヤーは現在この部屋にいません。";
+    return;
+  }
+
+  const maxHp = clampNumber(document.getElementById("maxHpInput").value, 1, 999);
+  const attack = clampNumber(document.getElementById("attackInput").value, 1, 99);
+  const magic = clampNumber(document.getElementById("magicInput").value, 1, 99);
+
+  document.getElementById("maxHpInput").value = maxHp;
+  document.getElementById("attackInput").value = attack;
+  document.getElementById("magicInput").value = magic;
+
+  const fd = new FormData();
+  fd.append("name", myName);
+  fd.append("room_id", roomId);
+  fd.append("target_name", player.name);
+  fd.append("max_hp", maxHp);
+  fd.append("attack", attack);
+  fd.append("magic", magic);
+
+  if (note) note.innerText = "変更中...";
+
+  try {
+    const res = await fetch("/developer_update_status", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      if (note) note.innerText = data.message || "変更に失敗しました。";
+      return;
+    }
+
+    if (note) note.innerText = "変更しました。";
+
+    await loadStatus();
+  } catch (e) {
+    if (note) note.innerText = "通信エラーで変更できませんでした。";
+  }
+}
+
+function backToLobby() {
+  location.href =
+    "/lobby?name=" +
+    encodeURIComponent(myName) +
+    "&room_id=" +
+    encodeURIComponent(roomId);
+}
+
+/* ===== Fセクション：文字エスケープ ===== */
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/* ===== Gセクション：初期化 ===== */
+loadStatus();
+</script>
+
+</body>
+</html>

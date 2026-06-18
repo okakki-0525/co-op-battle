@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャラクター選択</title>
+  <style>
+    body { margin:0; font-family:sans-serif; background:#1b1f2a; color:white; }
+    .container { max-width:760px; margin:0 auto; padding:16px; }
+    .panel { background:#2b3142; border-radius:12px; padding:16px; margin-bottom:16px; box-shadow:0 4px 10px rgba(0,0,0,.25); }
+    h1 { text-align:center; color:#ffd54f; margin-top:0; }
+    .description { text-align:center; color:#ddd; line-height:1.7; }
+    .login-name { text-align:center; margin-top:12px; color:#ffecb3; font-weight:bold; font-size:18px; }
+    .job-grid { display:grid; grid-template-columns:1fr; gap:14px; }
+    .job-card { background:#394056; border-radius:14px; padding:14px; display:grid; grid-template-columns:120px 1fr; gap:14px; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,.25); }
+    .job-image { width:120px; height:120px; object-fit:contain; border-radius:12px; background:#111722; box-shadow:0 4px 10px rgba(0,0,0,.35); }
+    .job-name { font-size:24px; font-weight:bold; color:#ffecb3; margin-bottom:8px; }
+    .job-text { color:#ddd; font-size:14px; line-height:1.7; margin-bottom:10px; }
+    .job-stats { color:#b2dfdb; font-size:13px; line-height:1.6; margin-bottom:10px; }
+    .select-btn { width:100%; padding:13px; border:none; border-radius:10px; background:#e53935; color:white; font-size:17px; font-weight:bold; cursor:pointer; }
+    .back-link { display:block; text-align:center; color:#ffd54f; margin-top:16px; text-decoration:none; }
+    @media (max-width:560px) { .job-card { grid-template-columns:1fr; text-align:center; } .job-image { margin:0 auto; width:150px; height:150px; } }
+  </style>
+</head>
+
+
+<audio id="tabidachiBgm" src="/static/sounds/tabidachi.mp3" loop></audio>
+
+<script>
+const tabidachiBgm = document.getElementById("tabidachiBgm");
+tabidachiBgm.volume = 0.35;
+
+function startTabidachiBgm() {
+  tabidachiBgm.play().catch(() => {});
+}
+
+document.addEventListener("click", startTabidachiBgm, { once: true });
+document.addEventListener("touchstart", startTabidachiBgm, { once: true });
+
+setTimeout(startTabidachiBgm, 500);
+</script>
+
+
+<body>
+<div class="container">
+  <div class="panel">
+    <h1>キャラクター選択</h1>
+    <div class="description">ログイン中の名前で参加します。<br>使うキャラクターを選んでください。</div>
+    <div class="login-name">プレイヤー名：{{ my_name }}</div>
+  </div>
+  <div class="job-grid">
+    <div class="job-card">
+      <img class="job-image" src="/static/images/yusya.png" alt="勇者">
+      <div>
+        <div class="job-name">勇者</div>
+        <div class="job-text">攻撃と回復をこなす万能型。連続攻撃で火力が上がる主役キャラ。</div>
+        <div class="job-stats">HP: {{ character_stats["勇者"].hp if character_stats and "勇者" in character_stats else "標準" }}　ATK: {{ character_stats["勇者"].attack if character_stats and "勇者" in character_stats else "高め" }}　MAGIC: {{ character_stats["勇者"].magic if character_stats and "勇者" in character_stats else "標準" }}</div>
+        <form action="/weapon_select" method="POST"><input type="hidden" name="job" value="勇者"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">勇者で進む</button></form>
+      </div>
+    </div>
+    <div class="job-card">
+      <img class="job-image" src="/static/images/tanc.png" alt="タンク">
+      <div>
+        <div class="job-name">タンク</div>
+        <div class="job-text">高いHPで仲間を守る防御型。攻撃、シールド（挑発）、選択回復が使えます。</div>
+        <div class="job-stats">HP: {{ character_stats["タンク"].hp if character_stats and "タンク" in character_stats else "高い" }}　ATK: {{ character_stats["タンク"].attack if character_stats and "タンク" in character_stats else "控えめ" }}　MAGIC: {{ character_stats["タンク"].magic if character_stats and "タンク" in character_stats else "控えめ" }}</div>
+        <form action="/weapon_select" method="POST"><input type="hidden" name="job" value="タンク"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">タンクで進む</button></form>
+      </div>
+    </div>
+    <div class="job-card">
+      <img class="job-image" src="/static/images/majyutu.png" alt="魔術師">
+      <div>
+        <div class="job-name">魔術師</div>
+        <div class="job-text">魔力と回復に優れた支援型。魔法防御で全体攻撃を軽減できます。</div>
+        <div class="job-stats">HP: {{ character_stats["魔術師"].hp if character_stats and "魔術師" in character_stats else "低め" }}　ATK: {{ character_stats["魔術師"].attack if character_stats and "魔術師" in character_stats else "標準" }}　MAGIC: {{ character_stats["魔術師"].magic if character_stats and "魔術師" in character_stats else "高い" }}</div>
+        <form action="/weapon_select" method="POST"><input type="hidden" name="job" value="魔術師"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">魔術師で進む</button></form>
+      </div>
+    </div>
+  </div>
+  <a class="back-link" href="/">受付に戻る</a>
+  <a class="back-link" href="/logout">ログアウト</a>
+</div>
+</body>
+</html>

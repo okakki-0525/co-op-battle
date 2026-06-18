@@ -1,0 +1,613 @@
+body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #1b1f2a;
+      color: white;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .panel {
+      background: #2b3142;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    .center { text-align: center; }
+
+    /* ===== Bセクション：ボス表示 ===== */
+    .boss-name {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .boss-image {
+      display: block;
+      width: 260px;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto 12px auto;
+      border-radius: 12px;
+    }
+
+    .boss-image.boss-damage-flash {
+      animation: bossDamageFlash 0.55s ease-in-out 0s 1;
+      box-shadow: 0 0 22px rgba(255,23,68,1);
+    }
+
+    @keyframes bossDamageFlash {
+      0% {
+        filter: brightness(1.8) saturate(1.5);
+        box-shadow: 0 0 24px rgba(255,23,68,1);
+      }
+      50% {
+        filter: brightness(0.8) saturate(1.0);
+        box-shadow: 0 0 4px rgba(255,23,68,0.2);
+      }
+      100% {
+        filter: brightness(1.8) saturate(1.5);
+        box-shadow: 0 0 24px rgba(255,23,68,1);
+      }
+    }
+
+    .boss-bar-wrap {
+      width: 100%;
+      background: #555;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 16px;
+      margin-top: 6px;
+    }
+
+    .boss-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4d4d, #ff9933);
+      transition: width 0.3s;
+    }
+
+    /* ===== Cセクション：メインパネル ===== */
+    .main-panel {
+      min-height: 82px;
+      background: #111722;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .status-text {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #ddd;
+      min-height: 22px;
+    }
+
+    /* ===== Dセクション：プレイヤー表示 ===== */
+    .players-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .player-card {
+      background: #394056;
+      border-radius: 10px;
+      padding: 10px;
+      transition: background 0.2s, box-shadow 0.2s, border 0.2s;
+    }
+
+    .player-card.me {
+      background: #5a4a1f;
+      border: 2px solid #ffd54f;
+      box-shadow: 0 0 10px rgba(255,213,79,0.6);
+    }
+
+    .player-card.selectable-heal {
+      border: 2px solid #66bb6a;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(102,187,106,0.65);
+    }
+
+    .player-card.selectable-guard {
+      border: 2px solid #42a5f5;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(66,165,245,0.65);
+    }
+
+    .player-card.damage-flash {
+      animation: damageFlash 0.9s ease-in-out 0s 2;
+      border: 2px solid #ff1744;
+      box-shadow: 0 0 18px rgba(255,23,68,0.95);
+    }
+
+    @keyframes damageFlash {
+      0% { background: #ff1744; box-shadow: 0 0 18px rgba(255,23,68,1); }
+      50% { background: #394056; box-shadow: 0 0 4px rgba(255,23,68,0.2); }
+      100% { background: #ff1744; box-shadow: 0 0 18px rgba(255,23,68,1); }
+    }
+
+    .dead { opacity: 0.5; }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .player-name {
+      font-weight: bold;
+      font-size: 14px;
+      min-width: 90px;
+    }
+
+    .player-stats {
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    /* ===== Eセクション：HPバー ===== */
+    .hp-bar-wrap {
+      flex: 1;
+      background: #555;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 10px;
+    }
+
+    .hp-bar {
+      height: 100%;
+      transition: width 0.3s;
+    }
+
+
+
+
+    /* ===== D-2セクション：ボス被弾エフェクト ===== */
+    .boss-hit-effect {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .slash-effect {
+      position: absolute;
+      width: 220%;
+      height: 16px;
+      left: -60%;
+      top: 50%;
+      transform: rotate(-25deg) translateY(-50%);
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,0),
+          var(--physical-effect-color-strong, rgba(255,255,255,0.95)),
+          var(--physical-effect-color-solid, rgba(120,220,255,1)),
+          rgba(255,255,255,0)
+        );
+      box-shadow:
+        0 0 18px var(--physical-effect-color-solid, rgba(120,220,255,1)),
+        0 0 36px var(--physical-effect-color-soft, rgba(120,220,255,0.9));
+      opacity: 0;
+      animation: slashAnim 0.45s ease-out forwards;
+    }
+
+    .slash-effect.second {
+      top: 40%;
+      animation-delay: 0.08s;
+    }
+
+    .slash-effect.third {
+      top: 60%;
+      animation-delay: 0.16s;
+    }
+
+    @keyframes slashAnim {
+      0% {
+        transform: rotate(-25deg) translate(-140%, -50%);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(-25deg) translate(90%, -50%);
+        opacity: 0;
+      }
+    }
+
+
+
+    
+    .magic-burst-effect {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 4px solid var(--magic-effect-color-strong, rgba(255,255,255,0.95));
+      box-shadow:
+        0 0 20px var(--magic-effect-color-solid, rgba(255,255,255,1)),
+        0 0 40px var(--magic-effect-color-soft, rgba(255,255,255,0.9));
+      animation: magicBurstAnim 0.8s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .magic-sparkle-effect,
+    .magic-sparkle-effect::before,
+    .magic-sparkle-effect::after {
+      position: absolute;
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--magic-effect-color, white);
+      box-shadow: 0 0 12px var(--magic-effect-color, white), 0 0 24px var(--magic-effect-color, white);
+      animation: sparkleAnim 0.9s ease-out forwards;
+    }
+
+    .magic-sparkle-effect {
+      left: 50%;
+      top: 50%;
+    }
+
+    .magic-sparkle-effect::before {
+      left: -40px;
+      top: -25px;
+      animation-delay: 0.05s;
+    }
+
+    .magic-sparkle-effect::after {
+      left: 35px;
+      top: 20px;
+      animation-delay: 0.1s;
+    }
+
+    .magic-star-effect {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 80px;
+      height: 80px;
+      transform: translate(-50%, -50%);
+      animation: starAnim 0.8s ease-out forwards;
+    }
+
+    .magic-star-effect::before,
+    .magic-star-effect::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      background: var(--magic-effect-color-strong, rgba(255,255,255,0.95));
+      box-shadow: 0 0 10px var(--magic-effect-color, white), 0 0 20px var(--magic-effect-color, white);
+      transform: translate(-50%, -50%);
+    }
+
+    .magic-star-effect::before {
+      width: 4px;
+      height: 80px;
+    }
+
+    .magic-star-effect::after {
+      width: 80px;
+      height: 4px;
+    }
+
+    @keyframes magicBurstAnim {
+      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+    }
+
+    @keyframes sparkleAnim {
+      0% { transform: translate(0,0) scale(0.2); opacity: 1; }
+      100% { transform: translate(0,-35px) scale(1.4); opacity: 0; }
+    }
+
+    @keyframes starAnim {
+      0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+    }
+
+
+    /* ===== D-3セクション：複数敵表示 ===== */
+    .enemies-grid {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: stretch;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .enemy-card {
+      position: relative;
+      flex: 1 1 130px;
+      max-width: 190px;
+      min-width: 120px;
+      background: #171d2b;
+      border-radius: 14px;
+      padding: 8px;
+      text-align: center;
+      overflow: hidden;
+      border: 1px solid #2d3548;
+    }
+
+    .enemy-card.dead {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+
+    .enemy-name {
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 4px;
+      min-height: 32px;
+    }
+
+    .enemy-image {
+      width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
+    }
+
+    .enemy-hp-text {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .enemy-bar-wrap {
+      background: #555;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 8px;
+      margin-top: 4px;
+    }
+
+    .enemy-bar {
+      height: 100%;
+      background: #e53935;
+      transition: width 0.3s;
+    }
+
+
+
+    /* ===== D-4セクション：敵表示レイヤー調整 ===== */
+    .enemy-hit-effect {
+      z-index: 2;
+    }
+
+    .enemy-image {
+      position: relative;
+      z-index: 1;
+    }
+
+    .enemy-name,
+    .enemy-hp-text,
+    .enemy-bar-wrap {
+      position: relative;
+      z-index: 3;
+    }
+
+
+    /* ===== Fセクション：操作ボタン ===== */
+    .actions {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      min-width: 130px;
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .attack-btn { background: #e53935; }
+    .heal-btn { background: #43a047; }
+    .guard-btn { background: #1e88e5; }
+    .cancel-btn { background: #757575; }
+    .rematch-btn { background: #8e24aa; }
+    .end-btn { background: #757575; }
+
+
+    /* ===== G-0セクション：チャット表示 ===== */
+    .chat-box {
+      max-height: 120px;
+      overflow-y: auto;
+      background: #111722;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .chat-message {
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .chat-name {
+      color: #ffd54f;
+      font-weight: bold;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      min-width: 0;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .chat-send-btn {
+      flex: 0 0 86px;
+      min-width: 86px;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #00897b;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .chat-send-btn:disabled,
+    .chat-input:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .chat-note {
+      color: #ccc;
+      font-size: 12px;
+      margin-top: 6px;
+      min-height: 16px;
+    }
+
+    /* ===== G-2セクション：投票退出 ===== */
+    .kick-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .kick-label {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .kick-btn {
+      flex: 0 0 120px;
+      min-width: 120px;
+      padding: 10px;
+      font-size: 14px;
+      background: #6d4c41;
+    }
+
+    .kick-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .kick-note {
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ===== Gセクション：ログ表示 ===== */
+    .log-box {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #111722;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ===== G-2セクション：退出ボタン ===== */
+    .leave-self-btn {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #546e7a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .kick-member-btn {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #6d4c41;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .kick-member-btn.kick-on {
+      background: #c62828;
+      box-shadow: 0 0 12px rgba(255,82,82,0.75);
+      border: 2px solid #ffcc80;
+    }
+
+    .kick-vote-status {
+      margin-bottom: 12px;
+      color: #ffecb3;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+
+    /* ===== F-2セクション：戦闘中の盾選択表示 ===== */
+    .battle-shield-btn {
+      width: 100%;
+      min-width: 0;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      align-items: center;
+      text-align: left;
+    }
+
+    .battle-shield-img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .battle-shield-name {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .battle-shield-meta {
+      font-size: 12px;
+      color: #e1f5fe;
+      margin-top: 3px;
+    }

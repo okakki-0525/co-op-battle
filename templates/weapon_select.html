@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>武器選択</title>
+
+  <!-- ===== Aセクション：全体スタイル ===== -->
+  <style>
+    body { margin: 0; font-family: sans-serif; background: #1b1f2a; color: white; }
+    .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+    .panel { background: #2b3142; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.25); }
+    h1 { text-align: center; color: #ffd54f; margin-top: 0; }
+    .description { text-align: center; color: #ddd; line-height: 1.7; }
+    .player-info { text-align: center; color: #ffecb3; font-weight: bold; margin-top: 10px; }
+    .selected-count { text-align: center; margin-top: 12px; color: #b2dfdb; font-weight: bold; }
+
+    /* ===== Bセクション：武器カード ===== */
+    .weapon-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .weapon-card {
+      background: #394056;
+      border: 3px solid transparent;
+      border-radius: 14px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 14px;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .weapon-card.selected { background: #4a3b20; border-color: #ffd54f; box-shadow: 0 0 14px rgba(255,213,79,0.5); }
+    .weapon-image { width: 110px; height: 110px; object-fit: contain; border-radius: 12px; background: #111722; box-shadow: 0 4px 10px rgba(0,0,0,0.35); }
+    .weapon-name { font-size: 22px; font-weight: bold; color: #ffecb3; margin-bottom: 6px; }
+    .weapon-text { color: #ddd; font-size: 14px; line-height: 1.7; margin-bottom: 10px; }
+    .weapon-meta { color: #b2dfdb; font-size: 13px; line-height: 1.6; }
+
+    /* ===== Cセクション：送信エリア ===== */
+    .submit-area { position: sticky; bottom: 0; background: rgba(27,31,42,0.95); padding: 12px 0; margin-top: 16px; }
+    .select-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; background: #e53935; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
+    .select-btn:disabled { background: #777; cursor: not-allowed; }
+    .back-link { display: block; text-align: center; color: #ffd54f; margin-top: 16px; text-decoration: none; }
+
+    @media (max-width: 560px) {
+      .weapon-card { grid-template-columns: 1fr; text-align: center; }
+      .weapon-image { margin: 0 auto; width: 140px; height: 140px; }
+    }
+  </style>
+</head>
+
+<audio id="tabidachiBgm" src="/static/sounds/tabidachi.mp3" loop></audio>
+
+<script>
+const tabidachiBgm = document.getElementById("tabidachiBgm");
+tabidachiBgm.volume = 0.35;
+
+function startTabidachiBgm() {
+  tabidachiBgm.play().catch(() => {});
+}
+
+document.addEventListener("click", startTabidachiBgm, { once: true });
+document.addEventListener("touchstart", startTabidachiBgm, { once: true });
+
+setTimeout(startTabidachiBgm, 500);
+</script>
+
+<body>
+
+<!-- ===== Dセクション：画面構造 ===== -->
+<div class="container">
+
+  <div class="panel">
+    <h1>武器選択</h1>
+    <div class="description">
+      戦闘に持ち込む武器を最大3本まで選んでください。<br>
+      タンクは次の画面で盾も選びます。
+    </div>
+    <div class="player-info">プレイヤー：{{ my_name }} ／ ジョブ：{{ job }}</div>
+    <div id="selectedCount" class="selected-count">選択中：0 / 3</div>
+  </div>
+
+  <!-- ===== Eセクション：武器一覧 ===== -->
+  <div class="weapon-grid">
+    {% for weapon_id, weapon in weapons.items() %}
+    <div class="weapon-card" data-weapon-id="{{ weapon_id }}" onclick="toggleWeapon(this)">
+      <img
+        class="weapon-image"
+        src="{{ weapon.image if weapon.image else '/static/images/weapons/' ~ weapon_id ~ '.png' }}"
+        alt="{{ weapon.name }}"
+        onerror="this.style.display='none';"
+      >
+
+      <div>
+          <div class="weapon-name">{{ weapon.name }}</div>
+          <div class="weapon-text">{{ weapon.description if weapon.description else '説明は後で追加予定です。' }}</div>
+
+          <div class="weapon-meta">
+          属性：
+          {% if weapon.element == "fire" %}
+            炎
+          {% elif weapon.element == "ice" %}
+            氷
+          {% elif weapon.element == "thunder" %}
+            雷
+          {% elif weapon.element == "wind" %}
+            風
+          {% elif weapon.element == "light" %}
+            光
+          {% elif weapon.element == "dark" %}
+            闇
+          {% else %}
+            無
+          {% endif %}
+          <br>
+
+          倍率：×{{ weapon.power_rate if weapon.power_rate else 1.0 }}
+
+          {% if job == "タンク" %}
+            <br>※タンク使用時は攻撃倍率がやや低下します。
+          {% endif %}
+         </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ===== Fセクション：送信フォーム ===== -->
+  <div class="submit-area">
+    <form action="{% if job == 'タンク' %}/shield_select{% else %}/join{% endif %}" method="POST" onsubmit="return prepareSubmit()">
+      <input type="hidden" name="name" value="{{ my_name }}">
+      <input type="hidden" name="job" value="{{ job }}">
+      <input type="hidden" name="room_id" value="{{ room_id or '' }}">
+      <input type="hidden" name="weapon_id" id="mainWeaponId" value="">
+      <input type="hidden" name="carried_weapon_ids" id="carriedWeaponIds" value="">
+      <input type="hidden" name="room_title" value="{{ room_title or '' }}">
+      <button id="submitButton" class="select-btn" type="submit" disabled>武器を選択してください</button>
+    </form>
+  </div>
+
+  <a class="back-link" href="/character_select?room_id={{ room_id or '' }}">ジョブ選択に戻る</a>
+
+</div>
+
+<!-- ===== Gセクション：JavaScript処理 ===== -->
+<script>
+let selectedWeapons = [];
+
+function toggleWeapon(card) {
+  const weaponId = card.dataset.weaponId;
+
+  if (selectedWeapons.includes(weaponId)) {
+    selectedWeapons = selectedWeapons.filter(id => id !== weaponId);
+    card.classList.remove("selected");
+  } else {
+    if (selectedWeapons.length >= 3) {
+      alert("持ち込める武器は3本までです。");
+      return;
+    }
+
+    selectedWeapons.push(weaponId);
+    card.classList.add("selected");
+  }
+
+  updateSelectedDisplay();
+}
+
+function updateSelectedDisplay() {
+  const count = selectedWeapons.length;
+  const countArea = document.getElementById("selectedCount");
+  const submitButton = document.getElementById("submitButton");
+
+  countArea.innerText = `選択中：${count} / 3`;
+
+  if (count === 0) {
+    submitButton.disabled = true;
+    submitButton.innerText = "武器を選択してください";
+  } else {
+    submitButton.disabled = false;
+    submitButton.innerText = `この${count}本で参加`;
+  }
+}
+
+function prepareSubmit() {
+  if (selectedWeapons.length === 0) {
+    alert("武器を1本以上選んでください。");
+    return false;
+  }
+
+  document.getElementById("mainWeaponId").value = selectedWeapons[0];
+  document.getElementById("carriedWeaponIds").value = selectedWeapons.join(",");
+
+  return true;
+}
+</script>
+
+</body>
+</html>
