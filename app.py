@@ -287,6 +287,30 @@ KICK_BLOCK_SECONDS = 60 * 60
 PLAYER_DATA_FILE = "players_data.json"
 EMPTY_WAITING_ROOM_KEEP_SECONDS = 10 * 60
 
+#
+# ==================================================
+# A-7セクション：Supabase接続設定
+# ==================================================
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "").strip()
+supabase = None
+
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        from supabase import create_client
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("Supabase接続準備OK")
+    except Exception as e:
+        supabase = None
+        print("Supabase接続準備失敗:", e)
+else:
+    print("Supabase環境変数なし。players_data.jsonを使用します。")
+
+
+def is_supabase_enabled():
+    return supabase is not None
+
 # ==================================================
 # A-2セクション：初期装備・開発者用所持設定
 # ==================================================
@@ -666,13 +690,67 @@ def get_room_summaries():
     return summaries
 
 
-
 # ==================================================
 # Bセクション：プレイヤーデータ管理
 # B-1：ログイン・セーブデータ
 # ==================================================
 
-def load_player_data():
+def row_to_player_data(row):
+    # ===== Supabaseの1行を、従来のplayers_data.json形式へ戻す =====
+    growth = row.get("growth") or {}
+    owned_items = row.get("owned_items") or {}
+
+    return {
+        "password_hash": row.get("password_hash", ""),
+        "display_name": growth.get("display_name", row.get("name", row.get("player_id", ""))),
+        "created_at": growth.get("created_at", time.time()),
+        "created_at_text": growth.get("created_at_text", ""),
+        "last_login": growth.get("last_login", ""),
+        "login_count": int(growth.get("login_count", 0)),
+        "characters": growth.get("characters", {
+            "勇者": {"hp_bonus": 0, "attack_bonus": 0, "magic_bonus": 0, "total_battles": 0, "wins": 0},
+            "タンク": {"hp_bonus": 0, "attack_bonus": 0, "magic_bonus": 0, "total_battles": 0, "wins": 0},
+            "魔術師": {"hp_bonus": 0, "attack_bonus": 0, "magic_bonus": 0, "total_battles": 0, "wins": 0}
+        }),
+        "items": owned_items.get("items", []),
+        "owned_weapons": owned_items.get("owned_weapons", []),
+        "owned_shields": owned_items.get("owned_shields", []),
+        "owned_skills": owned_items.get("owned_skills", [])
+    }
+
+
+def player_data_to_row(player_id, player_data):
+    # ===== 従来のplayers_data.json形式を、Supabase保存用の1行へ変換 =====
+    growth = {
+        "display_name": player_data.get("display_name", player_id),
+        "created_at": player_data.get("created_at", time.time()),
+        "created_at_text": player_data.get("created_at_text", ""),
+        "last_login": player_data.get("last_login", ""),
+        "login_count": int(player_data.get("login_count", 0)),
+        "characters": player_data.get("characters", {})
+    }
+
+    owned_items = {
+        "items": player_data.get("items", []),
+        "owned_weapons": player_data.get("owned_weapons", []),
+        "owned_shields": player_data.get("owned_shields", []),
+        "owned_skills": player_data.get("owned_skills", [])
+    }
+
+    return {
+        "player_id": player_id,
+        "name": player_data.get("display_name", player_id),
+        "password_hash": player_data.get("password_hash", ""),
+        "job": "",
+        "level": 1,
+        "exp": 0,
+        "gold": 0,
+        "owned_items": owned_items,
+        "growth": growth
+    }
+
+
+def load_player_data_from_json():
     if not os.path.exists(PLAYER_DATA_FILE):
         return {}
 
@@ -683,9 +761,52 @@ def load_player_data():
         return {}
 
 
-def save_player_data(data):
+def save_player_data_to_json(data):
     with open(PLAYER_DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def load_player_data():
+    # ===== Supabaseが使える場合はSupabaseから読む。失敗時はjsonへ退避 =====
+    if is_supabase_enabled():
+        try:
+            response = supabase.table("player_growth").select("*").execute()
+            rows = response.data or {}
+
+            result = {}
+
+            for row in rows:
+                player_id = row.get("player_id", "")
+                if not player_id:
+                    continue
+                result[player_id] = row_to_player_data(row)
+
+            return result
+
+        except Exception as e:
+            print("Supabase読込失敗。jsonへ退避:", e)
+
+    return load_player_data_from_json()
+
+
+def save_player_data(data):
+    # ===== Supabaseが使える場合はSupabaseへ保存。失敗時はjsonへ保存 =====
+    if is_supabase_enabled():
+        try:
+            rows = [
+                player_data_to_row(player_id, player_data)
+                for player_id, player_data in data.items()
+            ]
+
+            if rows:
+                supabase.table("player_growth").upsert(rows).execute()
+
+            return
+
+        except Exception as e:
+            print("Supabase保存失敗。jsonへ退避:", e)
+
+    save_player_data_to_json(data)
 
 
 def hash_password(password):
@@ -713,13 +834,13 @@ def create_new_player_data(player_id, password):
         "owned_skills": get_initial_owned_skills(player_id)
     }
 
+
 def is_logged_in():
     return bool(session.get("player_id"))
 
 
 def get_login_player_id():
     return session.get("player_id")
-
 
 # ==================================================
 # B-2セクション：所持品管理（武器・盾・魔法）
