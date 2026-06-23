@@ -4,85 +4,197 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ログイン</title>
+
   <style>
     body {
-  margin: 0;
-  font-family: sans-serif;
-  color: white;
+      margin: 0;
+      font-family: sans-serif;
+      color: white;
+      background:
+        linear-gradient(
+          rgba(27,31,42,0.25),
+          rgba(27,31,42,0.25)
+        ),
+        url("/static/images/login_bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
 
-  background:
-    linear-gradient(
-      rgba(27,31,42,0.25),
-      rgba(27,31,42,0.25)
-    ),
-    url("/static/images/login_bg.png");
+    .container {
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+    .panel {
+      background: #2b3142;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.25);
+      margin-top: 24px;
+    }
 
-  min-height: 100vh;
-}
-    .container { max-width:440px; margin:0 auto; padding:20px; }
-    .panel { background:#2b3142; border-radius:14px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,.25); margin-top:24px; }
-    h1 { text-align:center; color:#ffd54f; margin-top:0; }
-    .description { text-align:center; color:#ddd; line-height:1.7; margin-bottom:18px; }
-    label { display:block; margin-top:12px; margin-bottom:6px; color:#ffecb3; font-weight:bold; }
-    input { width:100%; box-sizing:border-box; padding:12px; font-size:17px; border-radius:10px; border:none; }
-    .message { color:#ffcc80; text-align:center; min-height:22px; margin-bottom:10px; line-height:1.5; }
+    h1 {
+      text-align: center;
+      color: #ffd54f;
+      margin-top: 0;
+    }
 
-<div class="message">{{ message }}</div>
+    .description {
+      text-align: center;
+      color: #ddd;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
 
-<div class="message" id="loadingMessage" style="display:none;">
-  照合中です…
-</div>
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      color: #ffecb3;
+      font-weight: bold;
+    }
 
-    .button-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
-    button { padding:13px; border:none; border-radius:10px; color:white; font-size:16px; font-weight:bold; cursor:pointer; }
-    .login-btn { background:#e53935; }
-    .register-btn { background:#1e88e5; }
-    .note { color:#ccc; font-size:12px; line-height:1.6; margin-top:14px; text-align:center; }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      font-size: 17px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    .message {
+      color: #ffcc80;
+      text-align: center;
+      min-height: 22px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .loading-message {
+      display: none;
+      color: #ffd54f;
+      text-align: center;
+      font-weight: bold;
+      margin: 12px 0;
+      line-height: 1.6;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    .login-btn {
+      background: #e53935;
+    }
+
+    .register-btn {
+      background: #1e88e5;
+    }
+
+    .note {
+      color: #ccc;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 14px;
+      text-align: center;
+    }
   </style>
 </head>
+
 <body>
-<div class="container">
-  <div class="panel">
-    <h1>協力バトル</h1>
-    <div class="description">名前とパスワードを決めてログインします。<br>登録済みの場合はログインしてください。</div>
-    <div class="message">{{ message }}</div>
-    <form method="POST" id="loginForm">
-      <label for="player_id">プレイヤー名</label>
-      <input id="player_id" name="player_id" type="text" maxlength="16" autocomplete="username" placeholder="例：のりゆき" required>
-      <label for="password">パスワード</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" placeholder="パスワード" required>
-      <input type="hidden" name="mode" id="modeInput" value="login">
-      <div class="button-row">
-        <button class="login-btn" id="loginBtn" type="submit" onclick="setMode('login')">ログイン</button>
-        <button class="register-btn" id="registerBtn" type="submit" onclick="setMode('register')">新規登録</button>
+  <div class="container">
+    <div class="panel">
+      <h1>協力バトル</h1>
+
+      <div class="description">
+        名前とパスワードを決めてログインします。<br>
+        登録済みの場合はログインしてください。
       </div>
-    </form>
-    <div class="note">この名前がゲーム内のプレイヤー名になります。</div>
+
+      <div class="message">{{ message }}</div>
+
+      <div class="loading-message" id="loadingMessage">
+        照合中です…<br>
+        少々お待ちください。
+      </div>
+
+      <form method="POST" id="loginForm">
+        <label for="player_id">プレイヤー名</label>
+        <input
+          id="player_id"
+          name="player_id"
+          type="text"
+          maxlength="16"
+          autocomplete="username"
+          placeholder="例：のりゆき"
+          required
+        >
+
+        <label for="password">パスワード</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="パスワード"
+          required
+        >
+
+        <input type="hidden" name="mode" id="modeInput" value="login">
+
+        <div class="button-row">
+          <button class="login-btn" id="loginBtn" type="submit" onclick="setMode('login')">
+            ログイン
+          </button>
+          <button class="register-btn" id="registerBtn" type="submit" onclick="setMode('register')">
+            新規登録
+          </button>
+        </div>
+      </form>
+
+      <div class="note">
+        この名前がゲーム内のプレイヤー名になります。
+      </div>
+    </div>
   </div>
-</div>
-<script>
-function setMode(mode) {
-    document.getElementById("modeInput").value = mode;
-}
 
-document.getElementById("loginForm").addEventListener("submit", function () {
+  <script>
+    function setMode(mode) {
+      document.getElementById("modeInput").value = mode;
+    }
 
-    // 照合中メッセージ表示
-    document.getElementById("loadingMessage").style.display = "block";
+    document.getElementById("loginForm").addEventListener("submit", function () {
+      document.getElementById("loadingMessage").style.display = "block";
 
-    // ボタン連打防止
-    document.getElementById("loginBtn").disabled = true;
-    document.getElementById("registerBtn").disabled = true;
+      document.getElementById("loginBtn").disabled = true;
+      document.getElementById("registerBtn").disabled = true;
 
-    document.getElementById("loginBtn").textContent = "照合中...";
-    document.getElementById("registerBtn").textContent = "照合中...";
-});
-</script>
-
+      document.getElementById("loginBtn").textContent = "照合中...";
+      document.getElementById("registerBtn").textContent = "照合中...";
+    });
+  </script>
 </body>
 </html>
