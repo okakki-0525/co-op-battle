@@ -31,6 +31,13 @@
     label { display:block; margin-top:12px; margin-bottom:6px; color:#ffecb3; font-weight:bold; }
     input { width:100%; box-sizing:border-box; padding:12px; font-size:17px; border-radius:10px; border:none; }
     .message { color:#ffcc80; text-align:center; min-height:22px; margin-bottom:10px; line-height:1.5; }
+
+<div class="message">{{ message }}</div>
+
+<div class="message" id="loadingMessage" style="display:none;">
+  照合中です…
+</div>
+
     .button-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
     button { padding:13px; border:none; border-radius:10px; color:white; font-size:16px; font-weight:bold; cursor:pointer; }
     .login-btn { background:#e53935; }
@@ -51,15 +58,31 @@
       <input id="password" name="password" type="password" autocomplete="current-password" placeholder="パスワード" required>
       <input type="hidden" name="mode" id="modeInput" value="login">
       <div class="button-row">
-        <button class="login-btn" type="submit" onclick="setMode('login')">ログイン</button>
-        <button class="register-btn" type="submit" onclick="setMode('register')">新規登録</button>
+        <button class="login-btn" id="loginBtn" type="submit" onclick="setMode('login')">ログイン</button>
+        <button class="register-btn" id="registerBtn" type="submit" onclick="setMode('register')">新規登録</button>
       </div>
     </form>
     <div class="note">この名前がゲーム内のプレイヤー名になります。</div>
   </div>
 </div>
 <script>
-function setMode(mode) { document.getElementById("modeInput").value = mode; }
+function setMode(mode) {
+    document.getElementById("modeInput").value = mode;
+}
+
+document.getElementById("loginForm").addEventListener("submit", function () {
+
+    // 照合中メッセージ表示
+    document.getElementById("loadingMessage").style.display = "block";
+
+    // ボタン連打防止
+    document.getElementById("loginBtn").disabled = true;
+    document.getElementById("registerBtn").disabled = true;
+
+    document.getElementById("loginBtn").textContent = "照合中...";
+    document.getElementById("registerBtn").textContent = "照合中...";
+});
 </script>
+
 </body>
 </html>
