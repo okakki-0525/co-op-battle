@@ -750,14 +750,24 @@
   </div>
 
   <!-- ===== Bセクション：敵表示 ===== -->
+    <!-- ===== Bセクション：敵表示 ===== -->
   <div class="panel">
     <div id="enemyTitle" class="boss-name">敵</div>
     <div id="enemiesArea"></div>
 
-    <div>合計HP: <span id="bossHpText">0 / 0</span></div>
-    <div class="boss-bar-wrap">
+    <div style="display:none;">
+      合計HP: <span id="bossHpText">0 / 0</span>
+    </div>
+
+    <div style="display:none;">
       <div id="bossBar" class="boss-bar"></div>
     </div>
+  </div>
+
+  <!-- ===== Dセクション：プレイヤー表示 ===== -->
+  <div class="panel">
+    <h2>パーティー</h2>
+    <div id="playersArea"></div>
   </div>
 
   <!-- ===== Cセクション：操作・戦闘状況パネル ===== -->
@@ -765,7 +775,6 @@
     <div id="mainPanel" class="main-panel">読み込み中...</div>
     <div id="actionStatus" class="status-text"></div>
   </div>
-
 
   <!-- ===== C-2セクション：チャット表示 ===== -->
   <div class="panel">
@@ -785,12 +794,6 @@
     </div>
 
     <div id="chatNote" class="chat-note"></div>
-  </div>
-
-  <!-- ===== Dセクション：プレイヤー表示 ===== -->
-  <div class="panel">
-    <h2>パーティー</h2>
-    <div id="playersArea"></div>
   </div>
 
   <!-- ===== Gセクション：ログ表示 ===== -->

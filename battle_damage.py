@@ -400,13 +400,22 @@ def apply_enemy_damage_to_player(enemy, target, base_damage, attack_category, el
     if shield_effects:
         damage = apply_shield_effects_to_damage(damage, shield_effects)
         protected_by_effect = True
+
+        shown_messages = game_state.setdefault("shown_party_reduce_messages", set())
+
         for effect in shield_effects:
+            message = effect.get("message", "盾がダメージを軽減した！")
+
+            if target_type == "all":
+                if message in shown_messages:
+                    continue
+                shown_messages.add(message)
+
             events.append({
-                "text": effect.get("message", "盾がダメージを軽減した！"),
+                "text": message,
                 "state": snapshot()
             })
-            add_log(effect.get("message", "盾がダメージを軽減した！"))
-
+            add_log(message)
 
     target_name = target.get("name", "")
 

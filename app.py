@@ -2515,18 +2515,18 @@ def make_status_from_name(name, job):
 
     if job == "勇者":
         hp = 105
-        attack = 11
+        attack = 17
         magic = 13
 
     elif job == "タンク":
-        hp = 150
-        attack = 13
+        hp = 170
+        attack = 14
         magic = 10
 
     elif job == "魔術師":
         hp = 90
         attack = 8
-        magic = 15
+        magic = 16
 
     else:
         hp = 100
@@ -3803,7 +3803,9 @@ def send_chat():
     name = request.form.get("name", "").strip()
     message = request.form.get("message", "").strip()
 
-    if get_player(name) is None:
+    player = get_player(name)
+
+    if player is None:
         return jsonify({"ok": False, "message": "プレイヤーが存在しません"})
 
     if not message:
@@ -3811,27 +3813,14 @@ def send_chat():
 
     message = message[:80]
 
+    # ===== チャットも操作扱いにする =====
+    player["last_seen"] = time.time()
+    player["online"] = True
+    game_state["all_offline_since"] = None
+
     add_chat_message(name, message)
 
     return jsonify({"ok": True})
-
-
-@app.route("/chat_state")
-def chat_state():
-    room_id = request.form.get("room_id", "").strip() or request.args.get("room_id", "").strip() or get_request_room_id()
-    if not switch_room_context(room_id):
-        return jsonify({"ok": False, "message": "部屋が見つかりません"})
-
-    check_empty_room_reset()
-
-    return jsonify({
-        "chat_messages": game_state["chat_messages"],
-        "chat_id": game_state["chat_id"],
-        "phase": game_state["phase"],
-        "started": game_state["started"]
-    })
-
-
 # ==================================================
 # P-7セクション：接続監視API
 # ==================================================

@@ -1084,6 +1084,7 @@ def process_turn():
     game_state["active_magic_wall"] = False
     game_state["active_magic_defense"] = False
     game_state["active_reflect_targets"] = []
+    game_state["shown_party_reduce_messages"] = set()
 
     # ===== このターンに有効な特殊武器 =====
     game_state["active_defender_users"] = []
