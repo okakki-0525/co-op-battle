@@ -58,25 +58,37 @@
     .container {
       max-width: 700px;
       margin: 0 auto;
-      padding: 16px;
+      padding: 8px;
     }
 
     .panel {
       background: #2b3142;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 14px;
+      border-radius: 8px;
+      padding: 9px;
+      margin-bottom: 8px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
 
     .center { text-align: center; }
 
+    h1 {
+      font-size: 22px;
+      margin: 0 0 2px;
+      line-height: 1.15;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin: 0 0 6px;
+      line-height: 1.2;
+    }
+
     /* ===== Bセクション：ボス表示 ===== */
     .boss-name {
       text-align: center;
-      font-size: 22px;
+      font-size: 18px;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .boss-image {
@@ -125,37 +137,37 @@
 
     /* ===== Cセクション：メインパネル ===== */
     .main-panel {
-      min-height: 82px;
+      min-height: 54px;
       background: #111722;
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 8px;
+      padding: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: bold;
-      line-height: 1.5;
+      line-height: 1.3;
     }
 
     .status-text {
-      margin-top: 8px;
-      font-size: 14px;
+      margin-top: 4px;
+      font-size: 12px;
       color: #ddd;
-      min-height: 22px;
+      min-height: 16px;
     }
 
     /* ===== Dセクション：プレイヤー表示 ===== */
     .players-grid {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 5px;
     }
 
     .player-card {
       background: #394056;
-      border-radius: 10px;
-      padding: 10px;
+      border-radius: 7px;
+      padding: 6px 8px;
       transition: background 0.2s, box-shadow 0.2s, border 0.2s;
     }
 
@@ -194,18 +206,43 @@
     .player-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .player-name {
       font-weight: bold;
-      font-size: 14px;
-      min-width: 90px;
+      font-size: 13px;
+      min-width: 82px;
+      line-height: 1.25;
     }
 
     .player-stats {
-      font-size: 12px;
+      font-size: 11px;
       color: #ccc;
+      line-height: 1.25;
+    }
+
+    .compact-player-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 150px;
+      max-width: 62%;
+    }
+
+    .player-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .player-hp-inline {
+      flex: 0 0 auto;
+      color: #e8f5e9;
+      font-size: 11px;
+      font-weight: bold;
+      white-space: nowrap;
     }
 
     /* ===== Eセクション：HPバー ===== */
@@ -214,7 +251,7 @@
       background: #555;
       border-radius: 999px;
       overflow: hidden;
-      height: 10px;
+      height: 8px;
     }
 
     .hp-bar {
@@ -379,21 +416,21 @@
     /* ===== D-3セクション：複数敵表示 ===== */
     .enemies-grid {
       display: flex;
-      gap: 10px;
+      gap: 6px;
       justify-content: center;
       align-items: stretch;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
 
     .enemy-card {
       position: relative;
-      flex: 1 1 130px;
-      max-width: 190px;
-      min-width: 120px;
+      flex: 1 1 118px;
+      max-width: 160px;
+      min-width: 104px;
       background: #171d2b;
-      border-radius: 14px;
-      padding: 8px;
+      border-radius: 8px;
+      padding: 6px;
       text-align: center;
       overflow: hidden;
       border: 1px solid #2d3548;
@@ -406,29 +443,30 @@
 
     .enemy-name {
       font-weight: bold;
-      font-size: 13px;
-      margin-bottom: 4px;
-      min-height: 32px;
+      font-size: 12px;
+      margin-bottom: 2px;
+      min-height: 28px;
+      line-height: 1.2;
     }
 
     .enemy-image {
       width: 100%;
-      max-height: 150px;
+      max-height: 118px;
       object-fit: contain;
       filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
     }
 
     .enemy-hp-text {
-      font-size: 12px;
-      margin-top: 4px;
+      font-size: 11px;
+      margin-top: 2px;
     }
 
     .enemy-bar-wrap {
       background: #555;
       border-radius: 999px;
       overflow: hidden;
-      height: 8px;
-      margin-top: 4px;
+      height: 6px;
+      margin-top: 2px;
     }
 
     .enemy-bar {
@@ -442,6 +480,44 @@
     /* ===== D-4セクション：敵表示レイヤー調整 ===== */
     .enemy-hit-effect {
       z-index: 2;
+    }
+
+    .enemy-damage-pop {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 5;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      color: #ffe66d;
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow:
+        0 2px 0 #7a1f00,
+        0 0 8px rgba(255,92,0,0.95),
+        0 0 16px rgba(255,235,59,0.85);
+      animation: enemyDamagePop 0.9s cubic-bezier(.2, .9, .24, 1) forwards;
+      white-space: nowrap;
+    }
+
+    @keyframes enemyDamagePop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -35%) scale(0.55);
+      }
+      18% {
+        opacity: 1;
+        transform: translate(-50%, -58%) scale(1.25);
+      }
+      55% {
+        opacity: 1;
+        transform: translate(-50%, -78%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -115%) scale(0.94);
+      }
     }
 
     .enemy-image {
@@ -461,17 +537,17 @@
     .actions {
       width: 100%;
       display: flex;
-      gap: 10px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
     button {
       flex: 1;
-      min-width: 130px;
-      padding: 14px;
-      font-size: 18px;
+      min-width: 104px;
+      padding: 9px 10px;
+      font-size: 15px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       color: white;
       font-weight: bold;
       cursor: pointer;
@@ -1229,7 +1305,10 @@ function createPlayerCard(p, compact=false) {
   if (compact) {
     div.innerHTML = `
       <div class="player-row">
-        <div class="player-name">${p.name}（${p.job || "未設定"}）${p.online === false ? "（通信切断）" : ""}</div>
+        <div class="player-name compact-player-name">
+          <span class="player-label">${p.name}（${p.job || "未設定"}）${p.online === false ? "（通信切断）" : ""}</span>
+          <span class="player-hp-inline">HP:${p.hp}/${p.max_hp}</span>
+        </div>
         <div class="hp-bar-wrap">
           <div class="hp-bar" style="width:${percent}%; background:${color}"></div>
         </div>
@@ -1248,7 +1327,7 @@ function createPlayerCard(p, compact=false) {
           </span>
         </div>
       </div>
-      <div class="hp-bar-wrap" style="margin-top:6px;">
+      <div class="hp-bar-wrap" style="margin-top:3px;">
         <div class="hp-bar" style="width:${percent}%; background:${color}"></div>
       </div>
     `;
@@ -1333,6 +1412,8 @@ function playEvents(events) {
         flashBoss(events[i].target_enemy, events[i].flash_type || "physical", events[i].flash_element || "light");
       }
     }
+
+    showEnemyDamagePopsForEvent(events[i]);
 
     if (events[i].state) {
       applyEventState(events[i].state);
@@ -1479,6 +1560,62 @@ previousBossHp = state.boss_hp;
 }
 
 /* ===== M-2セクション：点滅解除処理 ===== */
+function showEnemyDamagePopsForEvent(event) {
+  if (!event || !event.state || !event.state.enemies_hp) return;
+
+  const targetEnemyIds = [];
+
+  if (event.target_enemies && event.target_enemies.length > 0) {
+    event.target_enemies.forEach(enemyId => targetEnemyIds.push(enemyId));
+  } else if (event.target_enemy) {
+    targetEnemyIds.push(event.target_enemy);
+  }
+
+  if (targetEnemyIds.length === 0) return;
+
+  const displayedDamage = getDisplayedEnemyDamage(event);
+
+  if (displayedDamage === null) return;
+
+  targetEnemyIds.forEach(enemyId => {
+    showEnemyDamagePop(enemyId, displayedDamage, event.flash_enemy ? 420 : 0);
+  });
+}
+
+function getDisplayedEnemyDamage(event) {
+  const text = String((event && event.text) || "");
+
+  const normalMatch = text.match(/に\s*(\d+)\s*(?:反射)?ダメージ/);
+  if (normalMatch) {
+    return Number(normalMatch[1]);
+  }
+
+  const mojibakeMatch = text.match(/縺ｫ\s*(\d+)\s*(?:蜿榊ｰ・)?繝繝｡繝ｼ繧ｸ/);
+  if (mojibakeMatch) {
+    return Number(mojibakeMatch[1]);
+  }
+
+  return null;
+}
+
+function showEnemyDamagePop(enemyId, damage, delayMs=0) {
+  const card = document.getElementById("enemy-" + enemyId);
+
+  if (!card) return;
+
+  setTimeout(() => {
+    const pop = document.createElement("div");
+    pop.className = "enemy-damage-pop";
+    pop.textContent = `-${damage}`;
+
+    card.appendChild(pop);
+
+    setTimeout(() => {
+      pop.remove();
+    }, 950);
+  }, delayMs);
+}
+
 function clearDamageFlash() {
   if (damageFlashTimer) {
     clearTimeout(damageFlashTimer);

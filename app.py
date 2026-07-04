@@ -441,7 +441,29 @@ RANDOM_ZAKO_ENEMY_IDS = [
     "hell_hound",
     "death_knight",
     "chaos_eye",
-    "demon_lord"
+    "demon_lord",
+
+    "rabbit",
+    "horn_rabbit",
+    "forest_snake",
+    "cave_bat",
+    "baby_spider",
+    "mud_frog",
+    "wild_chicken",
+    "honey_bee",
+    "baby_treant",
+    "rock_mole",
+
+    "wild_boar",
+    "gray_wolf",
+    "giant_rat",
+    "monkey",
+    "hawk",
+    "sand_scorpion",
+    "lizardman",
+    "needle_boar",
+    "raccoon",
+    "mountain_goat",
 ]
 
 def build_random_zako_enemy_refs(count):

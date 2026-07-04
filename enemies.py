@@ -668,4 +668,248 @@ ENEMIES = {
         ]
     },
 
+    "rabbit": {
+        "name": "ラビット",
+        "max_hp": 55,
+        "image": "/static/images/rabbit.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "体当たり", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [8, 12]}
+        ]
+    },
+
+    "horn_rabbit": {
+        "name": "ホーンラビット",
+        "max_hp": 60,
+        "image": "/static/images/horn_rabbit.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "角突き", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 13]}
+        ]
+    },
+
+    "forest_snake": {
+        "name": "フォレストスネーク",
+        "max_hp": 60,
+        "image": "/static/images/forest_snake.png",
+        "role": "small_fry",
+        "weakness": ["fire"],
+        "resist": [],
+        "skills": [
+            {"name": "かみつき", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [8, 14]}
+        ]
+    },
+
+    "cave_bat": {
+        "name": "ケイブバット",
+        "max_hp": 50,
+        "image": "/static/images/cave_bat.png",
+        "role": "small_fry",
+        "weakness": ["light"],
+        "resist": ["dark"],
+        "skills": [
+            {"name": "羽ばたき", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [8, 12]}
+        ]
+    },
+
+    "baby_spider": {
+        "name": "ベビースパイダー",
+        "max_hp": 58,
+        "image": "/static/images/baby_spider.png",
+        "role": "small_fry",
+        "weakness": ["fire"],
+        "resist": [],
+        "skills": [
+            {"name": "小さな牙", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [8, 13]}
+        ]
+    },
+
+    "mud_frog": {
+        "name": "マッドフロッグ",
+        "max_hp": 65,
+        "image": "/static/images/mud_frog.png",
+        "role": "small_fry",
+        "weakness": ["thunder"],
+        "resist": ["water"],
+        "skills": [
+            {"name": "ジャンプ", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 13]}
+        ]
+    },
+
+    "wild_chicken": {
+        "name": "ワイルドチキン",
+        "max_hp": 55,
+        "image": "/static/images/wild_chicken.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "くちばし", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [8, 12]}
+        ]
+    },
+
+    "honey_bee": {
+        "name": "ハニービー",
+        "max_hp": 52,
+        "image": "/static/images/honey_bee.png",
+        "role": "small_fry",
+        "weakness": ["fire"],
+        "resist": ["wind"],
+        "skills": [
+            {"name": "針刺し", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 13]}
+        ]
+    },
+
+    "baby_treant": {
+        "name": "ベビートレント",
+        "max_hp": 70,
+        "image": "/static/images/baby_treant.png",
+        "role": "small_fry",
+        "weakness": ["fire"],
+        "resist": [],
+        "skills": [
+            {"name": "小枝パンチ", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 14]}
+        ]
+    },
+
+    "rock_mole": {
+        "name": "ロックモール",
+        "max_hp": 68,
+        "image": "/static/images/rock_mole.png",
+        "role": "small_fry",
+        "weakness": ["thunder"],
+        "resist": [],
+        "skills": [
+            {"name": "突進", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 13]}
+        ]
+    },
+
+    "wild_boar": {
+        "name": "ワイルドボア",
+        "max_hp": 80,
+        "image": "/static/images/wild_boar.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "突進", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [10, 16]}
+        ]
+    },
+
+    "gray_wolf": {
+        "name": "グレイウルフ",
+        "max_hp": 75,
+        "image": "/static/images/gray_wolf.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "かみつき", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [10, 17]}
+        ]
+    },
+
+    "giant_rat": {
+        "name": "ジャイアントラット",
+        "max_hp": 65,
+        "image": "/static/images/giant_rat.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "ひっかく", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 14]}
+        ]
+    },
+
+    "mad_monkey": {
+        "name": "マッドモンキー",
+        "max_hp": 70,
+        "image": "/static/images/mad_monkey.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "石投げ", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 15]}
+        ]
+    },
+
+    "hawk": {
+        "name": "ホーク",
+        "max_hp": 60,
+        "image": "/static/images/hawk.png",
+        "role": "small_fry",
+        "weakness": ["thunder"],
+        "resist": ["wind"],
+        "skills": [
+            {"name": "急降下", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [11, 17]}
+        ]
+    },
+
+    "sand_scorpion": {
+        "name": "サンドスコーピオン",
+        "max_hp": 90,
+        "image": "/static/images/sand_scorpion.png",
+        "role": "small_fry",
+        "weakness": ["water"],
+        "resist": ["earth"],
+        "skills": [
+            {"name": "毒針", "rate": 80, "target": "single", "category": "physical", "element": "none", "damage": [10, 16]},
+            {"name": "はさみ攻撃", "rate": 20, "target": "single", "category": "physical", "element": "none", "damage": [14, 22]}
+        ]
+    },
+
+    "lizardman": {
+        "name": "リザードマン",
+        "max_hp": 120,
+        "image": "/static/images/lizardman.png",
+        "role": "small_fry",
+        "weakness": ["ice"],
+        "resist": [],
+        "skills": [
+            {"name": "槍突き", "rate": 75, "target": "single", "category": "physical", "element": "none", "damage": [14, 22]},
+            {"name": "尻尾攻撃", "rate": 25, "target": "single", "category": "physical", "element": "none", "damage": [18, 28]}
+        ]
+    },
+
+    "needle_boar": {
+        "name": "ニードルボア",
+        "max_hp": 95,
+        "image": "/static/images/needle_boar.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "体当たり", "rate": 80, "target": "single", "category": "physical", "element": "none", "damage": [11, 18]},
+            {"name": "全身突撃", "rate": 20, "target": "single", "category": "physical", "element": "none", "damage": [16, 25]}
+        ]
+    },
+
+    "raccoon": {
+        "name": "ラクーン",
+        "max_hp": 72,
+        "image": "/static/images/raccoon.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": [],
+        "skills": [
+            {"name": "ひっかき", "rate": 100, "target": "single", "category": "physical", "element": "none", "damage": [9, 15]}
+        ]
+    },
+
+    "mountain_goat": {
+        "name": "マウンテンゴート",
+        "max_hp": 100,
+        "image": "/static/images/mountain_goat.png",
+        "role": "small_fry",
+        "weakness": [],
+        "resist": ["earth"],
+        "skills": [
+            {"name": "角突き", "rate": 80, "target": "single", "category": "physical", "element": "none", "damage": [11, 18]},
+            {"name": "飛び蹴り", "rate": 20, "target": "single", "category": "physical", "element": "none", "damage": [16, 25]}
+        ]
+    },
+
 }

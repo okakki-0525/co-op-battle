@@ -353,7 +353,10 @@ function createPlayerCard(p, compact=false) {
   if (compact) {
     div.innerHTML = `
       <div class="player-row">
-        <div class="player-name">${p.name}（${p.job || "未設定"}）${p.online === false ? "（通信切断）" : ""}</div>
+        <div class="player-name compact-player-name">
+          <span class="player-label">${p.name}（${p.job || "未設定"}）${p.online === false ? "（通信切断）" : ""}</span>
+          <span class="player-hp-inline">HP:${p.hp}/${p.max_hp}</span>
+        </div>
         <div class="hp-bar-wrap">
           <div class="hp-bar" style="width:${percent}%; background:${color}"></div>
         </div>
@@ -372,7 +375,7 @@ function createPlayerCard(p, compact=false) {
           </span>
         </div>
       </div>
-      <div class="hp-bar-wrap" style="margin-top:6px;">
+      <div class="hp-bar-wrap" style="margin-top:3px;">
         <div class="hp-bar" style="width:${percent}%; background:${color}"></div>
       </div>
     `;
@@ -457,6 +460,8 @@ function playEvents(events) {
         flashBoss(events[i].target_enemy, events[i].flash_type || "physical", events[i].flash_element || "light");
       }
     }
+
+    showEnemyDamagePopsForEvent(events[i]);
 
     if (events[i].state) {
       applyEventState(events[i].state);
@@ -600,6 +605,62 @@ previousBossHp = state.boss_hp;
 }
 
 /* ===== M-2セクション：点滅解除処理 ===== */
+function showEnemyDamagePopsForEvent(event) {
+  if (!event || !event.state || !event.state.enemies_hp) return;
+
+  const targetEnemyIds = [];
+
+  if (event.target_enemies && event.target_enemies.length > 0) {
+    event.target_enemies.forEach(enemyId => targetEnemyIds.push(enemyId));
+  } else if (event.target_enemy) {
+    targetEnemyIds.push(event.target_enemy);
+  }
+
+  if (targetEnemyIds.length === 0) return;
+
+  const displayedDamage = getDisplayedEnemyDamage(event);
+
+  if (displayedDamage === null) return;
+
+  targetEnemyIds.forEach(enemyId => {
+    showEnemyDamagePop(enemyId, displayedDamage, event.flash_enemy ? 420 : 0);
+  });
+}
+
+function getDisplayedEnemyDamage(event) {
+  const text = String((event && event.text) || "");
+
+  const normalMatch = text.match(/に\s*(\d+)\s*(?:反射)?ダメージ/);
+  if (normalMatch) {
+    return Number(normalMatch[1]);
+  }
+
+  const mojibakeMatch = text.match(/縺ｫ\s*(\d+)\s*(?:蜿榊ｰ・)?繝繝｡繝ｼ繧ｸ/);
+  if (mojibakeMatch) {
+    return Number(mojibakeMatch[1]);
+  }
+
+  return null;
+}
+
+function showEnemyDamagePop(enemyId, damage, delayMs=0) {
+  const card = document.getElementById("enemy-" + enemyId);
+
+  if (!card) return;
+
+  setTimeout(() => {
+    const pop = document.createElement("div");
+    pop.className = "enemy-damage-pop";
+    pop.textContent = `-${damage}`;
+
+    card.appendChild(pop);
+
+    setTimeout(() => {
+      pop.remove();
+    }, 950);
+  }, delayMs);
+}
+
 function clearDamageFlash() {
   if (damageFlashTimer) {
     clearTimeout(damageFlashTimer);
