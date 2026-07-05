@@ -164,8 +164,13 @@ setTimeout(startTabidachiBgm, 500);
 <!-- ===== Gセクション：JavaScript処理 ===== -->
 <script>
 let selectedShields = [];
+let isSubmitting = false;
 
 function toggleShield(card) {
+  if (isSubmitting) {
+    return;
+  }
+
   const shieldId = card.dataset.shieldId;
 
   if (selectedShields.includes(shieldId)) {
@@ -201,12 +206,24 @@ function updateSelectedDisplay() {
 }
 
 function prepareSubmit() {
+  if (isSubmitting) {
+    return false;
+  }
+
   if (selectedShields.length === 0) {
     alert("盾を1枚以上選んでください。");
     return false;
   }
 
   document.getElementById("carriedShieldIds").value = selectedShields.join(",");
+  isSubmitting = true;
+  const submitButton = document.getElementById("submitButton");
+  submitButton.disabled = true;
+  submitButton.innerText = "読み込み中です...";
+  document.querySelectorAll(".shield-card").forEach(card => {
+    card.style.pointerEvents = "none";
+  });
+
   return true;
 }
 </script>

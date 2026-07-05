@@ -145,8 +145,13 @@ setTimeout(startTabidachiBgm, 500);
 <!-- ===== Gセクション：JavaScript処理 ===== -->
 <script>
 let selectedWeapons = [];
+let isSubmitting = false;
 
 function toggleWeapon(card) {
+  if (isSubmitting) {
+    return;
+  }
+
   const weaponId = card.dataset.weaponId;
 
   if (selectedWeapons.includes(weaponId)) {
@@ -182,6 +187,10 @@ function updateSelectedDisplay() {
 }
 
 function prepareSubmit() {
+  if (isSubmitting) {
+    return false;
+  }
+
   if (selectedWeapons.length === 0) {
     alert("武器を1本以上選んでください。");
     return false;
@@ -189,6 +198,14 @@ function prepareSubmit() {
 
   document.getElementById("mainWeaponId").value = selectedWeapons[0];
   document.getElementById("carriedWeaponIds").value = selectedWeapons.join(",");
+
+  isSubmitting = true;
+  const submitButton = document.getElementById("submitButton");
+  submitButton.disabled = true;
+  submitButton.innerText = "読み込み中です...";
+  document.querySelectorAll(".weapon-card").forEach(card => {
+    card.style.pointerEvents = "none";
+  });
 
   return true;
 }

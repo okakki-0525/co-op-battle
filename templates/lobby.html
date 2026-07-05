@@ -776,6 +776,7 @@ let isChangingRoomTitle = false;
 let selectedEnemyRoom = "random_zako_1";
 let isSyncingEnemyRoom = false;
 let canSelectEnemyRoom = false;
+let isStartingBattle = false;
 let developerSecretTapCount = 0;
 let developerSecretTimer = null;
 
@@ -1673,6 +1674,13 @@ function updateStartButton(data) {
   const startBtn = document.getElementById("startBtn");
   const startNote = document.getElementById("startNote");
 
+  if (isStartingBattle) {
+    startBtn.disabled = true;
+    startBtn.innerText = "読み込み中です...";
+    startNote.innerText = "戦闘画面を読み込んでいます...";
+    return;
+  }
+
   if (myName === data.starter_name) {
     startBtn.disabled = false;
     startNote.innerText = "あなたが最後にロビーへ入ったので、戦闘開始できます。";
@@ -1687,9 +1695,9 @@ function updateEnemyButtonPermission(data) {
   canSelectEnemyRoom = myName === data.starter_name;
 
   document.querySelectorAll(".enemy-choice-btn").forEach(btn => {
-    btn.disabled = !canSelectEnemyRoom;
+    btn.disabled = !canSelectEnemyRoom || isSyncingEnemyRoom || isStartingBattle;
 
-    if (canSelectEnemyRoom) {
+    if (canSelectEnemyRoom && !isSyncingEnemyRoom && !isStartingBattle) {
       btn.classList.remove("disabled");
     } else {
       btn.classList.add("disabled");
@@ -1715,15 +1723,23 @@ function syncEnemyRoomFromServer(room) {
 }
 
 async function selectEnemyRoom(room) {
-  if (!canSelectEnemyRoom) {
+  if (!canSelectEnemyRoom || isStartingBattle) {
     return;
   }
 
-  applyEnemyRoomButtonState(room);
-
   if (isSyncingEnemyRoom) return;
 
+  applyEnemyRoomButtonState(room);
+  const startNote = document.getElementById("startNote");
+  if (startNote) {
+    startNote.innerText = "戦闘の種類を変更中です...";
+  }
+
   isSyncingEnemyRoom = true;
+  document.querySelectorAll(".enemy-choice-btn").forEach(btn => {
+    btn.disabled = true;
+    btn.classList.add("disabled");
+  });
 
   const fd = new FormData();
   fd.append("name", myName);
@@ -1750,6 +1766,13 @@ async function selectEnemyRoom(room) {
   }
 
   isSyncingEnemyRoom = false;
+  document.querySelectorAll(".enemy-choice-btn").forEach(btn => {
+    btn.disabled = !canSelectEnemyRoom || isStartingBattle;
+
+    if (canSelectEnemyRoom && !isStartingBattle) {
+      btn.classList.remove("disabled");
+    }
+  });
 }
 
 /* ===== M-3セクション：ロビー退出 ===== */
@@ -1785,7 +1808,28 @@ async function leaveLobby() {
 
 /* ===== Nセクション：戦闘開始処理 ===== */
 function startBattle() {
+  if (isStartingBattle) {
+    return;
+  }
+
+  isStartingBattle = true;
   const room = selectedEnemyRoom || "random_zako_1";
+  const startBtn = document.getElementById("startBtn");
+  const startNote = document.getElementById("startNote");
+
+  if (startBtn) {
+    startBtn.disabled = true;
+    startBtn.innerText = "読み込み中です...";
+  }
+
+  if (startNote) {
+    startNote.innerText = "戦闘画面を読み込んでいます...";
+  }
+
+  document.querySelectorAll(".enemy-choice-btn").forEach(btn => {
+    btn.disabled = true;
+    btn.classList.add("disabled");
+  });
 
   location.href =
     "/start?name=" +

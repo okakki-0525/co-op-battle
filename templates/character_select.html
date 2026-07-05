@@ -38,6 +38,27 @@ document.addEventListener("click", startTabidachiBgm, { once: true });
 document.addEventListener("touchstart", startTabidachiBgm, { once: true });
 
 setTimeout(startTabidachiBgm, 500);
+
+let isSubmitting = false;
+
+function lockSubmit(form) {
+  if (isSubmitting) {
+    return false;
+  }
+
+  isSubmitting = true;
+
+  document.querySelectorAll(".select-btn").forEach(button => {
+    button.disabled = true;
+  });
+
+  const submitButton = form.querySelector(".select-btn");
+  if (submitButton) {
+    submitButton.innerText = "読み込み中です...";
+  }
+
+  return true;
+}
 </script>
 
 
@@ -55,7 +76,7 @@ setTimeout(startTabidachiBgm, 500);
         <div class="job-name">勇者</div>
         <div class="job-text">攻撃と回復をこなす万能型。連続攻撃で火力が上がる主役キャラ。</div>
         <div class="job-stats">HP: {{ character_stats["勇者"].hp if character_stats and "勇者" in character_stats else "標準" }}　ATK: {{ character_stats["勇者"].attack if character_stats and "勇者" in character_stats else "高め" }}　MAGIC: {{ character_stats["勇者"].magic if character_stats and "勇者" in character_stats else "標準" }}</div>
-        <form action="/weapon_select" method="POST"><input type="hidden" name="job" value="勇者"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">勇者で進む</button></form>
+        <form action="/weapon_select" method="POST" onsubmit="return lockSubmit(this)"><input type="hidden" name="job" value="勇者"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">勇者で進む</button></form>
       </div>
     </div>
     <div class="job-card">
@@ -64,7 +85,7 @@ setTimeout(startTabidachiBgm, 500);
         <div class="job-name">タンク</div>
         <div class="job-text">高いHPで仲間を守る防御型。攻撃、シールド（挑発）、選択回復が使えます。</div>
         <div class="job-stats">HP: {{ character_stats["タンク"].hp if character_stats and "タンク" in character_stats else "高い" }}　ATK: {{ character_stats["タンク"].attack if character_stats and "タンク" in character_stats else "控えめ" }}　MAGIC: {{ character_stats["タンク"].magic if character_stats and "タンク" in character_stats else "控えめ" }}</div>
-        <form action="/weapon_select" method="POST"><input type="hidden" name="job" value="タンク"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">タンクで進む</button></form>
+        <form action="/weapon_select" method="POST" onsubmit="return lockSubmit(this)"><input type="hidden" name="job" value="タンク"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">タンクで進む</button></form>
       </div>
     </div>
     <div class="job-card">
@@ -73,7 +94,7 @@ setTimeout(startTabidachiBgm, 500);
         <div class="job-name">魔術師</div>
         <div class="job-text">魔力と回復に優れた支援型。魔法防御で全体攻撃を軽減できます。</div>
         <div class="job-stats">HP: {{ character_stats["魔術師"].hp if character_stats and "魔術師" in character_stats else "低め" }}　ATK: {{ character_stats["魔術師"].attack if character_stats and "魔術師" in character_stats else "標準" }}　MAGIC: {{ character_stats["魔術師"].magic if character_stats and "魔術師" in character_stats else "高い" }}</div>
-        <form action="/weapon_select" method="POST"><input type="hidden" name="job" value="魔術師"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">魔術師で進む</button></form>
+        <form action="/weapon_select" method="POST" onsubmit="return lockSubmit(this)"><input type="hidden" name="job" value="魔術師"><input type="hidden" name="room_id" value="{{ room_id or '' }}"><input type="hidden" name="room_title" value="{{ room_title or '' }}"><button class="select-btn" type="submit">魔術師で進む</button></form>
       </div>
     </div>
   </div>
