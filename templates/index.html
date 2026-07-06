@@ -83,6 +83,7 @@ h1{text-align:center;color:var(--gold);font-size:34px;margin:8px 0 6px;text-shad
 .room-title-input{width:100%;box-sizing:border-box;padding:13px;font-size:17px;border:none;border-radius:10px;background:#f5f7fb;color:#111;}
 .create-room-btn{width:100%;padding:18px;border:none;border-radius:14px;background:linear-gradient(90deg,#d32f2f,#ff7043);color:white;font-size:22px;font-weight:bold;cursor:pointer;box-shadow:0 4px 14px rgba(229,57,53,0.35);}
 .create-room-btn:hover{filter:brightness(1.08);}
+.create-room-btn:disabled{background:#777;cursor:not-allowed;opacity:0.75;box-shadow:none;}
 .empty-message{text-align:center;font-size:18px;color:#ccc;line-height:1.8;padding:20px 0;}
 .room-card{background:#394056;border-radius:14px;padding:16px;margin-top:16px;box-shadow:0 4px 10px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.06);}
 .room-card.battle{background:#31405d;}
@@ -247,7 +248,7 @@ h1{text-align:center;color:var(--gold);font-size:34px;margin:8px 0 6px;text-shad
 <!-- ===== Dセクション：部屋作成 ===== -->
 <div class="panel">
     <div class="section-title">新しい部屋を作る</div>
-    <form class="room-create-form" action="/character_select" method="GET">
+    <form class="room-create-form" action="/character_select" method="GET" onsubmit="return lockRoomCreateSubmit(this);">
     <input type="hidden" name="action" value="create">
 
     <input
@@ -377,6 +378,23 @@ h1{text-align:center;color:var(--gold);font-size:34px;margin:8px 0 6px;text-shad
 
 <!-- ===== Zセクション：受付ページ自動更新 ===== -->
 <script>
+let isCreatingRoom = false;
+
+function lockRoomCreateSubmit(form) {
+    if (isCreatingRoom) {
+        return false;
+    }
+
+    isCreatingRoom = true;
+    const button = form.querySelector(".create-room-btn");
+    if (button) {
+        button.disabled = true;
+        button.innerText = "読み込み中です...";
+    }
+
+    return true;
+}
+
 function escapeHtml(text) {
     return String(text)
         .replaceAll("&", "&amp;")
