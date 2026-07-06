@@ -253,6 +253,46 @@ body {
       animation-delay: 0.16s;
     }
 
+    .laser-blade-effect {
+      position: absolute;
+      inset: -4px;
+      z-index: 6;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .laser-blade-line {
+      position: absolute;
+      left: var(--laser-cross-x, 50%);
+      top: var(--laser-cross-y, 50%);
+      width: 190%;
+      height: 8px;
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,0),
+          rgba(255,255,255,0.85) 36%,
+          rgba(255,255,255,1) 50%,
+          rgba(255,255,255,0.85) 64%,
+          rgba(255,255,255,0)
+        );
+      box-shadow:
+        0 0 8px rgba(255,255,255,1),
+        0 0 18px rgba(190,240,255,0.95),
+        0 0 34px rgba(160,220,255,0.72);
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(var(--laser-angle, -24deg)) translateX(-115%);
+      animation: laserBladeSweep 0.2s linear forwards;
+    }
+
+    .laser-blade-line.second {
+      --laser-angle: 24deg;
+      animation-name: laserBladeSweepBack;
+      animation-delay: 0.2s;
+    }
+
     @keyframes slashAnim {
       0% {
         transform: rotate(-25deg) translate(-140%, -50%);
@@ -264,6 +304,40 @@ body {
       100% {
         transform: rotate(-25deg) translate(90%, -50%);
         opacity: 0;
+      }
+    }
+
+    @keyframes laserBladeSweep {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, -24deg)) translateX(-115%);
+      }
+      12% {
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, -24deg)) translateX(115%);
+      }
+    }
+
+    @keyframes laserBladeSweepBack {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, 24deg)) translateX(115%);
+      }
+      12% {
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, 24deg)) translateX(-115%);
       }
     }
 
@@ -365,6 +439,7 @@ body {
 
     /* ===== D-3セクション：複数敵表示 ===== */
     .enemies-grid {
+      position: relative;
       display: flex;
       gap: 6px;
       justify-content: center;

@@ -303,6 +303,46 @@
       animation-delay: 0.16s;
     }
 
+    .laser-blade-effect {
+      position: absolute;
+      inset: -4px;
+      z-index: 6;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .laser-blade-line {
+      position: absolute;
+      left: var(--laser-cross-x, 50%);
+      top: var(--laser-cross-y, 50%);
+      width: 190%;
+      height: 8px;
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,0),
+          rgba(255,255,255,0.85) 36%,
+          rgba(255,255,255,1) 50%,
+          rgba(255,255,255,0.85) 64%,
+          rgba(255,255,255,0)
+        );
+      box-shadow:
+        0 0 8px rgba(255,255,255,1),
+        0 0 18px rgba(190,240,255,0.95),
+        0 0 34px rgba(160,220,255,0.72);
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(var(--laser-angle, -24deg)) translateX(-115%);
+      animation: laserBladeSweep 0.2s linear forwards;
+    }
+
+    .laser-blade-line.second {
+      --laser-angle: 24deg;
+      animation-name: laserBladeSweepBack;
+      animation-delay: 0.2s;
+    }
+
     @keyframes slashAnim {
       0% {
         transform: rotate(-25deg) translate(-140%, -50%);
@@ -314,6 +354,40 @@
       100% {
         transform: rotate(-25deg) translate(90%, -50%);
         opacity: 0;
+      }
+    }
+
+    @keyframes laserBladeSweep {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, -24deg)) translateX(-115%);
+      }
+      12% {
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, -24deg)) translateX(115%);
+      }
+    }
+
+    @keyframes laserBladeSweepBack {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, 24deg)) translateX(115%);
+      }
+      12% {
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--laser-angle, 24deg)) translateX(-115%);
       }
     }
 
@@ -415,6 +489,7 @@
 
     /* ===== D-3セクション：複数敵表示 ===== */
     .enemies-grid {
+      position: relative;
       display: flex;
       gap: 6px;
       justify-content: center;
@@ -980,7 +1055,8 @@ const sounds = {
   heal_all: new Audio("/static/sounds/heal_all.mp3"),
   magic_defense: new Audio("/static/sounds/magic_defense.mp3"),
   boss_attack: new Audio("/static/sounds/boss_attack.mp3"),
-  boss_breath: new Audio("/static/sounds/boss_breath.mp3")
+  boss_breath: new Audio("/static/sounds/boss_breath.mp3"),
+  laser_blade: new Audio("/static/sounds/laser-blade.mp3")
 }; 
 
 /* ===== H-2Bセクション：BGM設定 ===== */
@@ -1405,7 +1481,9 @@ function playEvents(events) {
       playVictoryBgm();
     }
 
-    if (events[i].flash_enemy) {
+    if (events[i].effect_key === "laser_blade") {
+      showLaserBladeEffect();
+    } else if (events[i].flash_enemy) {
       if (events[i].target_enemies && events[i].target_enemies.length > 0) {
         flashBossMany(events[i].target_enemies, events[i].flash_type || "physical", events[i].flash_element || "light");
       } else {
@@ -1782,6 +1860,33 @@ function flashBossMany(enemyIds, flashType='physical', flashElement='light') {
   enemyIds.forEach(enemyId => {
     flashBoss(enemyId, flashType, flashElement);
   });
+}
+
+function showLaserBladeEffect() {
+  const grid = document.querySelector(".enemies-grid");
+  if (!grid) return;
+
+  playSound("laser_blade");
+
+  const oldEffect = grid.querySelector(".laser-blade-effect");
+  if (oldEffect) {
+    oldEffect.remove();
+  }
+
+  const effect = document.createElement("div");
+  effect.className = "laser-blade-effect";
+  effect.style.setProperty("--laser-cross-x", `${36 + Math.random() * 28}%`);
+  effect.style.setProperty("--laser-cross-y", `${34 + Math.random() * 30}%`);
+  effect.innerHTML = `
+    <div class="laser-blade-line"></div>
+    <div class="laser-blade-line second"></div>
+  `;
+
+  grid.appendChild(effect);
+
+  setTimeout(() => {
+    effect.remove();
+  }, 520);
 }
 
 function clearBossFlashTarget(targetElement) {

@@ -441,7 +441,8 @@ def execute_player_action_by_order(p, events, turn_effects):
                 "target_enemies": target_enemy_ids,
                 "flash_enemy": bool(target_enemy_ids),
                 "flash_type": "physical",
-                "flash_element": attack_element
+                "flash_element": attack_element,
+                "effect_key": attack_weapon_id
             })
             add_log(all_attack_text)
 

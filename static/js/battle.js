@@ -56,7 +56,8 @@ const sounds = {
   guard: new Audio("/static/sounds/guard.mp3"),
   magic_defense: new Audio("/static/sounds/magic_defense.mp3"),
   boss_attack: new Audio("/static/sounds/boss_attack.mp3"),
-  boss_breath: new Audio("/static/sounds/boss_breath.mp3")
+  boss_breath: new Audio("/static/sounds/boss_breath.mp3"),
+  laser_blade: new Audio("/static/sounds/laser-blade.mp3")
 }; 
 
 /* ===== H-2Bセクション：BGM設定 ===== */
@@ -453,7 +454,9 @@ function playEvents(events) {
       playVictoryBgm();
     }
 
-    if (events[i].flash_enemy) {
+    if (events[i].effect_key === "laser_blade") {
+      showLaserBladeEffect();
+    } else if (events[i].flash_enemy) {
       if (events[i].target_enemies && events[i].target_enemies.length > 0) {
         flashBossMany(events[i].target_enemies, events[i].flash_type || "physical", events[i].flash_element || "light");
       } else {
@@ -827,6 +830,33 @@ function flashBossMany(enemyIds, flashType='physical', flashElement='light') {
   enemyIds.forEach(enemyId => {
     flashBoss(enemyId, flashType, flashElement);
   });
+}
+
+function showLaserBladeEffect() {
+  const grid = document.querySelector(".enemies-grid");
+  if (!grid) return;
+
+  playSound("laser_blade");
+
+  const oldEffect = grid.querySelector(".laser-blade-effect");
+  if (oldEffect) {
+    oldEffect.remove();
+  }
+
+  const effect = document.createElement("div");
+  effect.className = "laser-blade-effect";
+  effect.style.setProperty("--laser-cross-x", `${36 + Math.random() * 28}%`);
+  effect.style.setProperty("--laser-cross-y", `${34 + Math.random() * 30}%`);
+  effect.innerHTML = `
+    <div class="laser-blade-line"></div>
+    <div class="laser-blade-line second"></div>
+  `;
+
+  grid.appendChild(effect);
+
+  setTimeout(() => {
+    effect.remove();
+  }, 520);
 }
 
 function clearBossFlashTarget(targetElement) {
