@@ -204,7 +204,7 @@ except Exception:
         "volcano_dragon": {
             "name": "ボルケーノドラゴン",
             "max_hp": 1000,
-            "image": "/static/images/vdragon.png",
+            "image": "/static/images/enemies/vdragon.png",
             "role": "boss",
             "weakness": ["ice"],
             "resist": ["fire"],
@@ -216,7 +216,7 @@ except Exception:
         "goblin_fighter": {
             "name": "ゴブリンファイター",
             "max_hp": 350,
-            "image": "/static/images/goblin_fighter.png",
+            "image": "/static/images/enemies/goblin_fighter.png",
             "role": "fighter",
             "weakness": [],
             "resist": [],
@@ -227,7 +227,7 @@ except Exception:
         "goblin_mage": {
             "name": "ゴブリンメイジ",
             "max_hp": 150,
-            "image": "/static/images/goblin_mage.png",
+            "image": "/static/images/enemies/goblin_mage.png",
             "role": "mage",
             "weakness": ["light"],
             "resist": ["dark"],
@@ -238,7 +238,7 @@ except Exception:
         "goblin_healer": {
             "name": "ゴブリンヒーラー",
             "max_hp": 200,
-            "image": "/static/images/goblin_healer.png",
+            "image": "/static/images/enemies/goblin_healer.png",
             "role": "healer",
             "weakness": [],
             "resist": [],
@@ -250,7 +250,7 @@ except Exception:
         "training_golem": {
             "name": "訓練用ゴーレム",
             "max_hp": 200,
-            "image": "/static/images/training_golem.png",
+            "image": "/static/images/enemies/training_golem.png",
             "role": "training_golem",
             "weakness": ["thunder"],
             "resist": [],

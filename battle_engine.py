@@ -350,7 +350,11 @@ def execute_player_action_by_order(p, events, turn_effects):
         )
 
         if is_all_attack_weapon_local(attack_weapon_id):
-            events.append({"text": attack_text, "state": snapshot()})
+            events.append({
+                "text": attack_text,
+                "state": snapshot(),
+                "skip_sound": attack_weapon_id == "laser_blade"
+            })
         else:
             events.append({
                 "text": attack_text,
@@ -358,7 +362,9 @@ def execute_player_action_by_order(p, events, turn_effects):
                 "target_enemy": target_enemy["id"],
                 "flash_enemy": True,
                 "flash_type": "physical",
-                "flash_element": attack_element
+                "flash_element": attack_element,
+                "effect_key": attack_weapon_id if attack_weapon_id == "bazooka" else "",
+                "skip_sound": attack_weapon_id == "bazooka"
             })
 
         add_log(attack_text)
@@ -625,6 +631,8 @@ def execute_player_action_by_order(p, events, turn_effects):
                     events[skill_event_index]["flash_enemy"] = True
                     events[skill_event_index]["flash_type"] = "magic"
                     events[skill_event_index]["flash_element"] = element
+                    events[skill_event_index]["effect_key"] = skill_id if skill_id == "meteor_strike" else ""
+                    events[skill_event_index]["skip_sound"] = skill_id == "meteor_strike"
 
                 for enemy in list(game_state.get("enemies", [])):
                     if enemy["hp"] <= 0:

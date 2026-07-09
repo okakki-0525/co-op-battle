@@ -116,7 +116,7 @@ setTimeout(startTabidachiBgm, 500);
 
           倍率：×{{ weapon.power_rate if weapon.power_rate else 1.0 }}
 
-          {% if job == "タンク" %}
+          {% if job == "タンク" and weapon.obtain_type == "raid_drop" and "勇者" in weapon.allowed_jobs %}
             <br>※タンク使用時は攻撃倍率がやや低下します。
           {% endif %}
          </div>

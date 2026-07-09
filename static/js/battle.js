@@ -57,7 +57,9 @@ const sounds = {
   magic_defense: new Audio("/static/sounds/magic_defense.mp3"),
   boss_attack: new Audio("/static/sounds/boss_attack.mp3"),
   boss_breath: new Audio("/static/sounds/boss_breath.mp3"),
-  laser_blade: new Audio("/static/sounds/laser-blade.mp3")
+  laser_blade: new Audio("/static/sounds/laser-blade.mp3"),
+  bazooka: new Audio("/static/sounds/bazooka.mp3"),
+  meteo: new Audio("/static/sounds/meteo.mp3")
 }; 
 
 /* ===== H-2Bセクション：BGM設定 ===== */
@@ -446,7 +448,9 @@ function playEvents(events) {
     }
 
     mainPanel.innerText = events[i].text;
-    playSoundForEventText(events[i].text);
+    if (!events[i].skip_sound) {
+      playSoundForEventText(events[i].text);
+    }
 
     // ===== 勝利BGMは「勝利！」の字幕が表示された瞬間に鳴らす =====
     if (events[i].text === "勝利！") {
@@ -456,6 +460,10 @@ function playEvents(events) {
 
     if (events[i].effect_key === "laser_blade") {
       showLaserBladeEffect();
+    } else if (events[i].effect_key === "bazooka") {
+      showBazookaEffect(events[i].target_enemy);
+    } else if (events[i].effect_key === "meteor_strike") {
+      showMeteorStrikeEffect();
     } else if (events[i].flash_enemy) {
       if (events[i].target_enemies && events[i].target_enemies.length > 0) {
         flashBossMany(events[i].target_enemies, events[i].flash_type || "physical", events[i].flash_element || "light");
@@ -857,6 +865,81 @@ function showLaserBladeEffect() {
   setTimeout(() => {
     effect.remove();
   }, 520);
+}
+
+function showBazookaEffect(enemyId) {
+  const card = enemyId
+    ? document.getElementById("enemy-" + enemyId)
+    : document.querySelector(".enemy-card:not(.dead)");
+
+  if (!card) return;
+
+  playSound("bazooka");
+
+  const oldEffect = card.querySelector(".bazooka-effect");
+  if (oldEffect) {
+    oldEffect.remove();
+  }
+
+  const effect = document.createElement("div");
+  effect.className = "bazooka-effect";
+  effect.innerHTML = `
+    <div class="bazooka-core"></div>
+    <div class="bazooka-echo"></div>
+    <div class="bazooka-mini" style="--mini-x:-42px; --mini-y:-36px; --mini-delay:0s;"></div>
+    <div class="bazooka-mini" style="--mini-x:46px; --mini-y:-24px; --mini-delay:0.04s;"></div>
+    <div class="bazooka-mini" style="--mini-x:-34px; --mini-y:34px; --mini-delay:0.08s;"></div>
+    <div class="bazooka-mini" style="--mini-x:38px; --mini-y:42px; --mini-delay:0.12s;"></div>
+  `;
+
+  card.appendChild(effect);
+
+  setTimeout(() => {
+    effect.remove();
+  }, 980);
+}
+
+function showMeteorStrikeEffect() {
+  const grid = document.querySelector(".enemies-grid");
+  if (!grid) return;
+
+  playSound("meteo");
+
+  const oldEffect = grid.querySelector(".meteor-strike-effect");
+  if (oldEffect) {
+    oldEffect.remove();
+  }
+
+  const effect = document.createElement("div");
+  effect.className = "meteor-strike-effect";
+
+  const meteorCount = 12;
+
+  Array.from({ length: meteorCount }).forEach((_, index) => {
+    effect.appendChild(createMeteorRock(index * 0.1));
+  });
+
+  grid.appendChild(effect);
+
+  setTimeout(() => {
+    effect.remove();
+  }, 2600);
+}
+
+function createMeteorRock(delaySeconds) {
+  const meteor = document.createElement("div");
+  const xPercent = 6 + Math.random() * 88;
+  const flightAngle = Math.random() * 30 - 15;
+  const drift = Math.tan(flightAngle * Math.PI / 180) * 230;
+
+  meteor.className = "meteor-rock";
+  meteor.style.setProperty("--meteor-x", `${xPercent.toFixed(1)}%`);
+  meteor.style.setProperty("--meteor-delay", `${delaySeconds.toFixed(2)}s`);
+  meteor.style.setProperty("--meteor-size", `${34 + Math.random() * 16}px`);
+  meteor.style.setProperty("--meteor-angle", `${flightAngle.toFixed(1)}deg`);
+  meteor.style.setProperty("--meteor-drift", `${Math.round(drift)}px`);
+  meteor.style.setProperty("--meteor-trail-angle", `${(-flightAngle).toFixed(1)}deg`);
+  return meteor;
 }
 
 function clearBossFlashTarget(targetElement) {

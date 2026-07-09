@@ -343,6 +343,122 @@
       animation-delay: 0.2s;
     }
 
+    .bazooka-effect {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bazooka-core,
+    .bazooka-echo,
+    .bazooka-mini {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0.2);
+      pointer-events: none;
+    }
+
+    .bazooka-core {
+      width: 150px;
+      height: 150px;
+      background: rgba(255,255,255,0.98);
+      box-shadow:
+        0 0 18px rgba(255,255,255,1),
+        0 0 42px rgba(210,240,255,0.86);
+      animation: bazookaCoreBurst 0.3s ease-out forwards;
+    }
+
+    .bazooka-echo {
+      width: 170px;
+      height: 170px;
+      border: 8px solid rgba(255,255,255,0.9);
+      box-shadow:
+        inset 0 0 18px rgba(255,255,255,0.7),
+        0 0 24px rgba(210,240,255,0.72);
+      animation: bazookaEchoFade 0.3s ease-out 0.3s forwards;
+      opacity: 0;
+    }
+
+    .bazooka-mini {
+      left: calc(50% + var(--mini-x, 0px));
+      top: calc(50% + var(--mini-y, 0px));
+      width: 58px;
+      height: 58px;
+      background: rgba(255,255,255,0.94);
+      box-shadow:
+        0 0 12px rgba(255,255,255,1),
+        0 0 24px rgba(210,240,255,0.75);
+      animation: bazookaMiniBurst 0.3s ease-out forwards;
+      animation-delay: calc(0.6s + var(--mini-delay, 0s));
+      opacity: 0;
+    }
+
+    .bazooka-mini::after {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.72);
+      opacity: 0;
+      animation: bazookaMiniEcho 0.3s ease-out forwards;
+      animation-delay: calc(0.6s + var(--mini-delay, 0s));
+    }
+
+    .meteor-strike-effect {
+      position: absolute;
+      inset: -12px;
+      z-index: 6;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .meteor-rock {
+      position: absolute;
+      left: var(--meteor-x, 50%);
+      top: -32%;
+      width: var(--meteor-size, 44px);
+      height: var(--meteor-size, 44px);
+      border-radius: 53% 47% 58% 42% / 44% 61% 39% 56%;
+      background:
+        radial-gradient(circle at 34% 30%, rgba(255,190,150,0.95) 0 12%, rgba(255,58,35,0.95) 28%, rgba(128,18,16,1) 68%, rgba(68,8,10,1) 100%);
+      box-shadow:
+        0 0 12px rgba(255,84,43,1),
+        0 0 28px rgba(255,35,20,0.78);
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(var(--meteor-angle, 0deg));
+      animation: meteorFall 0.293s linear forwards;
+      animation-delay: var(--meteor-delay, 0s);
+    }
+
+    .meteor-rock::before,
+    .meteor-rock::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -160%;
+      width: 42%;
+      height: 170%;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,110,70,0.42), rgba(255,42,22,0.78));
+      filter: blur(1px);
+      transform: translateX(-50%) rotate(var(--meteor-trail-angle, -15deg));
+      transform-origin: 50% 100%;
+      z-index: -1;
+    }
+
+    .meteor-rock::after {
+      width: 22%;
+      height: 125%;
+      top: -115%;
+      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,215,180,0.45), rgba(255,96,42,0.65));
+      filter: blur(2px);
+    }
+
     @keyframes slashAnim {
       0% {
         transform: rotate(-25deg) translate(-140%, -50%);
@@ -388,6 +504,77 @@
       100% {
         opacity: 0;
         transform: translate(-50%, -50%) rotate(var(--laser-angle, 24deg)) translateX(-115%);
+      }
+    }
+
+    @keyframes bazookaCoreBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.08);
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes bazookaEchoFade {
+      0% {
+        opacity: 0.85;
+        transform: translate(-50%, -50%) scale(0.18);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+    }
+
+    @keyframes bazookaMiniBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.15);
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+    }
+
+    @keyframes bazookaMiniEcho {
+      0% {
+        opacity: 0.72;
+        transform: scale(0.2);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.25);
+      }
+    }
+
+    @keyframes meteorFall {
+      0% {
+        opacity: 0;
+        top: -34%;
+        left: var(--meteor-x, 50%);
+        transform: translate(-50%, -50%) rotate(var(--meteor-angle, 0deg)) scale(0.72);
+      }
+      12% {
+        opacity: 1;
+      }
+      70% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        top: 128%;
+        left: calc(var(--meteor-x, 50%) + var(--meteor-drift, 0px));
+        transform: translate(-50%, -50%) rotate(var(--meteor-angle, 0deg)) scale(1.06);
       }
     }
 
@@ -1056,7 +1243,9 @@ const sounds = {
   magic_defense: new Audio("/static/sounds/magic_defense.mp3"),
   boss_attack: new Audio("/static/sounds/boss_attack.mp3"),
   boss_breath: new Audio("/static/sounds/boss_breath.mp3"),
-  laser_blade: new Audio("/static/sounds/laser-blade.mp3")
+  laser_blade: new Audio("/static/sounds/laser-blade.mp3"),
+  bazooka: new Audio("/static/sounds/bazooka.mp3"),
+  meteo: new Audio("/static/sounds/meteo.mp3")
 }; 
 
 /* ===== H-2Bセクション：BGM設定 ===== */
@@ -1473,7 +1662,9 @@ function playEvents(events) {
     }
 
     mainPanel.innerText = events[i].text;
-    playSoundForEventText(events[i].text);
+    if (!events[i].skip_sound) {
+      playSoundForEventText(events[i].text);
+    }
 
     // ===== 勝利BGMは「勝利！」の字幕が表示された瞬間に鳴らす =====
     if (events[i].text === "勝利！") {
@@ -1483,6 +1674,10 @@ function playEvents(events) {
 
     if (events[i].effect_key === "laser_blade") {
       showLaserBladeEffect();
+    } else if (events[i].effect_key === "bazooka") {
+      showBazookaEffect(events[i].target_enemy);
+    } else if (events[i].effect_key === "meteor_strike") {
+      showMeteorStrikeEffect();
     } else if (events[i].flash_enemy) {
       if (events[i].target_enemies && events[i].target_enemies.length > 0) {
         flashBossMany(events[i].target_enemies, events[i].flash_type || "physical", events[i].flash_element || "light");
@@ -1887,6 +2082,81 @@ function showLaserBladeEffect() {
   setTimeout(() => {
     effect.remove();
   }, 520);
+}
+
+function showBazookaEffect(enemyId) {
+  const card = enemyId
+    ? document.getElementById("enemy-" + enemyId)
+    : document.querySelector(".enemy-card:not(.dead)");
+
+  if (!card) return;
+
+  playSound("bazooka");
+
+  const oldEffect = card.querySelector(".bazooka-effect");
+  if (oldEffect) {
+    oldEffect.remove();
+  }
+
+  const effect = document.createElement("div");
+  effect.className = "bazooka-effect";
+  effect.innerHTML = `
+    <div class="bazooka-core"></div>
+    <div class="bazooka-echo"></div>
+    <div class="bazooka-mini" style="--mini-x:-42px; --mini-y:-36px; --mini-delay:0s;"></div>
+    <div class="bazooka-mini" style="--mini-x:46px; --mini-y:-24px; --mini-delay:0.04s;"></div>
+    <div class="bazooka-mini" style="--mini-x:-34px; --mini-y:34px; --mini-delay:0.08s;"></div>
+    <div class="bazooka-mini" style="--mini-x:38px; --mini-y:42px; --mini-delay:0.12s;"></div>
+  `;
+
+  card.appendChild(effect);
+
+  setTimeout(() => {
+    effect.remove();
+  }, 980);
+}
+
+function showMeteorStrikeEffect() {
+  const grid = document.querySelector(".enemies-grid");
+  if (!grid) return;
+
+  playSound("meteo");
+
+  const oldEffect = grid.querySelector(".meteor-strike-effect");
+  if (oldEffect) {
+    oldEffect.remove();
+  }
+
+  const effect = document.createElement("div");
+  effect.className = "meteor-strike-effect";
+
+  const meteorCount = 12;
+
+  Array.from({ length: meteorCount }).forEach((_, index) => {
+    effect.appendChild(createMeteorRock(index * 0.1));
+  });
+
+  grid.appendChild(effect);
+
+  setTimeout(() => {
+    effect.remove();
+  }, 2600);
+}
+
+function createMeteorRock(delaySeconds) {
+  const meteor = document.createElement("div");
+  const xPercent = 6 + Math.random() * 88;
+  const flightAngle = Math.random() * 30 - 15;
+  const drift = Math.tan(flightAngle * Math.PI / 180) * 230;
+
+  meteor.className = "meteor-rock";
+  meteor.style.setProperty("--meteor-x", `${xPercent.toFixed(1)}%`);
+  meteor.style.setProperty("--meteor-delay", `${delaySeconds.toFixed(2)}s`);
+  meteor.style.setProperty("--meteor-size", `${34 + Math.random() * 16}px`);
+  meteor.style.setProperty("--meteor-angle", `${flightAngle.toFixed(1)}deg`);
+  meteor.style.setProperty("--meteor-drift", `${Math.round(drift)}px`);
+  meteor.style.setProperty("--meteor-trail-angle", `${(-flightAngle).toFixed(1)}deg`);
+  return meteor;
 }
 
 function clearBossFlashTarget(targetElement) {

@@ -4,7 +4,7 @@ ENEMIES = {
     "training_golem": {
         "name": "訓練用ゴーレム",
         "max_hp": 100,
-        "image": "/static/images/training_golem.png",
+        "image": "/static/images/enemies/training_golem.png",
         "role": "training_golem",
         "weakness": ["thunder"],
         "resist": [],
@@ -31,7 +31,7 @@ ENEMIES = {
     "volcano_dragon": {
         "name": "炎帝竜 ボルケーノドラゴン",
         "max_hp": 3000,
-        "image": "/static/images/vdragon.png",
+        "image": "/static/images/enemies/vdragon.png",
         "role": "raid_boss",
         "weakness": ["ice"],
         "resist": ["fire"],
@@ -66,7 +66,7 @@ ENEMIES = {
     "tempest_dragon": {
         "name": "嵐帝竜 テンペストドラゴン",
         "max_hp": 3000,
-        "image": "/static/images/tempest_dragon.png",
+        "image": "/static/images/enemies/tempest_dragon.png",
         "role": "raid_boss",
         "weakness": ["thunder"],
         "resist": ["wind"],
@@ -101,7 +101,7 @@ ENEMIES = {
     "goblin_fighter": {
         "name": "ゴブリンファイター",
         "max_hp": 350,
-        "image": "/static/images/goblin_fighter.png",
+        "image": "/static/images/enemies/goblin_fighter.png",
         "role": "fighter",
         "weakness": [],
         "resist": [],
@@ -120,7 +120,7 @@ ENEMIES = {
     "goblin_mage": {
         "name": "ゴブリンメイジ",
         "max_hp": 150,
-        "image": "/static/images/goblin_mage.png",
+        "image": "/static/images/enemies/goblin_mage.png",
         "role": "mage",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -139,7 +139,7 @@ ENEMIES = {
     "goblin_healer": {
         "name": "ゴブリンヒーラー",
         "max_hp": 200,
-        "image": "/static/images/goblin_healer.png",
+        "image": "/static/images/enemies/goblin_healer.png",
         "role": "healer",
         "weakness": [],
         "resist": [],
@@ -166,7 +166,7 @@ ENEMIES = {
     "slime": {
         "name": "スライム",
         "max_hp": 80,
-        "image": "/static/images/slime.png",
+        "image": "/static/images/enemies/slime.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -178,7 +178,7 @@ ENEMIES = {
     "goblin": {
         "name": "ゴブリン",
         "max_hp": 120,
-        "image": "/static/images/goblin.png",
+        "image": "/static/images/enemies/goblin.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -190,7 +190,7 @@ ENEMIES = {
     "orc": {
         "name": "オーク",
         "max_hp": 180,
-        "image": "/static/images/orc.png",
+        "image": "/static/images/enemies/orc.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -203,7 +203,7 @@ ENEMIES = {
     "ice_wolf": {
         "name": "アイスウルフ",
         "max_hp": 140,
-        "image": "/static/images/ice_wolf.png",
+        "image": "/static/images/enemies/ice_wolf.png",
         "role": "small_fry",
         "weakness": ["fire"],
         "resist": ["ice"],
@@ -215,7 +215,7 @@ ENEMIES = {
     "thunder_bird": {
         "name": "サンダーバード",
         "max_hp": 140,
-        "image": "/static/images/thunder_bird.png",
+        "image": "/static/images/enemies/thunder_bird.png",
         "role": "small_fry",
         "weakness": ["wind"],
         "resist": ["thunder"],
@@ -227,7 +227,7 @@ ENEMIES = {
     "wind_fairy": {
         "name": "ウインドフェアリー",
         "max_hp": 120,
-        "image": "/static/images/wind_fairy.png",
+        "image": "/static/images/enemies/wind_fairy.png",
         "role": "small_fry",
         "weakness": ["thunder"],
         "resist": ["wind"],
@@ -239,7 +239,7 @@ ENEMIES = {
     "holy_slime": {
         "name": "ホーリースライム",
         "max_hp": 130,
-        "image": "/static/images/holy_slime.png",
+        "image": "/static/images/enemies/holy_slime.png",
         "role": "small_fry",
         "weakness": ["dark"],
         "resist": ["light"],
@@ -251,7 +251,7 @@ ENEMIES = {
     "shadow_bat": {
         "name": "シャドウバット",
         "max_hp": 130,
-        "image": "/static/images/shadow_bat.png",
+        "image": "/static/images/enemies/shadow_bat.png",
         "role": "small_fry",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -263,7 +263,7 @@ ENEMIES = {
     "fire_lizard": {
         "name": "ファイアリザード",
         "max_hp": 150,
-        "image": "/static/images/fire_lizard.png",
+        "image": "/static/images/enemies/fire_lizard.png",
         "role": "small_fry",
         "weakness": ["ice"],
         "resist": ["fire"],
@@ -275,7 +275,7 @@ ENEMIES = {
     "stone_beetle": {
         "name": "ストーンビートル",
         "max_hp": 220,
-        "image": "/static/images/stone_beetle.png",
+        "image": "/static/images/enemies/stone_beetle.png",
         "role": "small_fry",
         "weakness": ["thunder"],
         "resist": [],
@@ -288,7 +288,7 @@ ENEMIES = {
     "kobold": {
         "name": "コボルト",
         "max_hp": 70,
-        "image": "/static/images/kobold.png",
+        "image": "/static/images/enemies/kobold.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -300,7 +300,7 @@ ENEMIES = {
     "kobold_archer": {
         "name": "コボルトアーチャー",
         "max_hp": 60,
-        "image": "/static/images/kobold_archer.png",
+        "image": "/static/images/enemies/kobold_archer.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -312,7 +312,7 @@ ENEMIES = {
     "harpy": {
         "name": "ハーピー",
         "max_hp": 80,
-        "image": "/static/images/harpy.png",
+        "image": "/static/images/enemies/harpy.png",
         "role": "small_fry",
         "weakness": ["thunder"],
         "resist": ["wind"],
@@ -324,7 +324,7 @@ ENEMIES = {
     "minotaur": {
         "name": "ミノタウロス",
         "max_hp": 180,
-        "image": "/static/images/minotaur.png",
+        "image": "/static/images/enemies/minotaur.png",
         "role": "fighter",
         "weakness": [],
         "resist": [],
@@ -337,7 +337,7 @@ ENEMIES = {
     "treant": {
         "name": "トレント",
         "max_hp": 220,
-        "image": "/static/images/treant.png",
+        "image": "/static/images/enemies/treant.png",
         "role": "tank",
         "weakness": ["fire"],
         "resist": [],
@@ -349,7 +349,7 @@ ENEMIES = {
     "gargoyle": {
         "name": "ガーゴイル",
         "max_hp": 160,
-        "image": "/static/images/gargoyle.png",
+        "image": "/static/images/enemies/gargoyle.png",
         "role": "tank",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -361,7 +361,7 @@ ENEMIES = {
     "skeleton": {
         "name": "スケルトン",
         "max_hp": 90,
-        "image": "/static/images/skeleton.png",
+        "image": "/static/images/enemies/skeleton.png",
         "role": "small_fry",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -373,7 +373,7 @@ ENEMIES = {
     "skeleton_knight": {
         "name": "スケルトンナイト",
         "max_hp": 170,
-        "image": "/static/images/skeleton_knight.png",
+        "image": "/static/images/enemies/skeleton_knight.png",
         "role": "fighter",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -386,7 +386,7 @@ ENEMIES = {
     "ghost": {
         "name": "ゴースト",
         "max_hp": 80,
-        "image": "/static/images/ghost.png",
+        "image": "/static/images/enemies/ghost.png",
         "role": "mage",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -398,7 +398,7 @@ ENEMIES = {
     "lich": {
         "name": "リッチ",
         "max_hp": 140,
-        "image": "/static/images/lich.png",
+        "image": "/static/images/enemies/lich.png",
         "role": "mage",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -411,7 +411,7 @@ ENEMIES = {
     "goblin_archer": {
         "name": "ゴブリンアーチャー",
         "max_hp": 95,
-        "image": "/static/images/goblin_archer.png",
+        "image": "/static/images/enemies/goblin_archer.png",
         "role": "danger",
         "weakness": [],
         "resist": [],
@@ -424,7 +424,7 @@ ENEMIES = {
     "dark_scout": {
         "name": "ダークスカウト",
         "max_hp": 95,
-        "image": "/static/images/dark_scout.png",
+        "image": "/static/images/enemies/dark_scout.png",
         "role": "danger",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -437,7 +437,7 @@ ENEMIES = {
     "bomb_slime": {
         "name": "ボムスライム",
         "max_hp": 90,
-        "image": "/static/images/bomb_slime.png",
+        "image": "/static/images/enemies/bomb_slime.png",
         "role": "danger",
         "weakness": ["ice"],
         "resist": ["fire"],
@@ -450,7 +450,7 @@ ENEMIES = {
     "imp": {
         "name": "インプ",
         "max_hp": 90,
-        "image": "/static/images/imp.png",
+        "image": "/static/images/enemies/imp.png",
         "role": "danger",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -463,7 +463,7 @@ ENEMIES = {
     "skeleton_mage": {
         "name": "スケルトンメイジ",
         "max_hp": 100,
-        "image": "/static/images/skeleton_mage.png",
+        "image": "/static/images/enemies/skeleton_mage.png",
         "role": "danger",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -476,7 +476,7 @@ ENEMIES = {
     "kobold_thief": {
         "name": "コボルトシーフ",
         "max_hp": 90,
-        "image": "/static/images/kobold_thief.png",
+        "image": "/static/images/enemies/kobold_thief.png",
         "role": "danger",
         "weakness": [],
         "resist": [],
@@ -489,7 +489,7 @@ ENEMIES = {
     "blood_bat": {
         "name": "ブラッドバット",
         "max_hp": 100,
-        "image": "/static/images/blood_bat.png",
+        "image": "/static/images/enemies/blood_bat.png",
         "role": "danger",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -502,7 +502,7 @@ ENEMIES = {
     "shadow": {
         "name": "シャドウ",
         "max_hp": 100,
-        "image": "/static/images/shadow.png",
+        "image": "/static/images/enemies/shadow.png",
         "role": "danger",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -515,7 +515,7 @@ ENEMIES = {
     "poison_mushroom": {
         "name": "ポイズンキノコ",
         "max_hp": 105,
-        "image": "/static/images/poison_mushroom.png",
+        "image": "/static/images/enemies/poison_mushroom.png",
         "role": "danger",
         "weakness": ["fire"],
         "resist": [],
@@ -528,7 +528,7 @@ ENEMIES = {
     "curse_doll": {
         "name": "カースドール",
         "max_hp": 100,
-        "image": "/static/images/curse_doll.png",
+        "image": "/static/images/enemies/curse_doll.png",
         "role": "danger",
         "weakness": ["fire"],
         "resist": ["dark"],
@@ -541,7 +541,7 @@ ENEMIES = {
     "dark_priest": {
         "name": "ダークプリースト",
         "max_hp": 170,
-        "image": "/static/images/dark_priest.png",
+        "image": "/static/images/enemies/dark_priest.png",
         "role": "elite",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -554,7 +554,7 @@ ENEMIES = {
     "flame_witch": {
         "name": "フレイムウィッチ",
         "max_hp": 165,
-        "image": "/static/images/flame_witch.png",
+        "image": "/static/images/enemies/flame_witch.png",
         "role": "elite",
         "weakness": ["ice"],
         "resist": ["fire"],
@@ -567,7 +567,7 @@ ENEMIES = {
     "ice_sorcerer": {
         "name": "アイスソーサラー",
         "max_hp": 165,
-        "image": "/static/images/ice_sorcerer.png",
+        "image": "/static/images/enemies/ice_sorcerer.png",
         "role": "elite",
         "weakness": ["fire"],
         "resist": ["ice"],
@@ -580,7 +580,7 @@ ENEMIES = {
     "thunder_shaman": {
         "name": "サンダーシャーマン",
         "max_hp": 170,
-        "image": "/static/images/thunder_shaman.png",
+        "image": "/static/images/enemies/thunder_shaman.png",
         "role": "elite",
         "weakness": ["wind"],
         "resist": ["thunder"],
@@ -593,7 +593,7 @@ ENEMIES = {
     "wind_oracle": {
         "name": "ウインドオラクル",
         "max_hp": 165,
-        "image": "/static/images/wind_oracle.png",
+        "image": "/static/images/enemies/wind_oracle.png",
         "role": "elite",
         "weakness": ["thunder"],
         "resist": ["wind"],
@@ -606,7 +606,7 @@ ENEMIES = {
     "blood_vampire": {
         "name": "ブラッドヴァンパイア",
         "max_hp": 185,
-        "image": "/static/images/blood_vampire.png",
+        "image": "/static/images/enemies/blood_vampire.png",
         "role": "elite",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -619,7 +619,7 @@ ENEMIES = {
     "hell_hound": {
         "name": "ヘルハウンド",
         "max_hp": 190,
-        "image": "/static/images/hell_hound.png",
+        "image": "/static/images/enemies/hell_hound.png",
         "role": "elite",
         "weakness": ["ice"],
         "resist": ["fire"],
@@ -632,7 +632,7 @@ ENEMIES = {
     "death_knight": {
         "name": "デスナイト",
         "max_hp": 195,
-        "image": "/static/images/death_knight.png",
+        "image": "/static/images/enemies/death_knight.png",
         "role": "elite",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -645,7 +645,7 @@ ENEMIES = {
     "chaos_eye": {
         "name": "カオスアイ",
         "max_hp": 170,
-        "image": "/static/images/chaos_eye.png",
+        "image": "/static/images/enemies/chaos_eye.png",
         "role": "elite",
         "weakness": [],
         "resist": [],
@@ -658,7 +658,7 @@ ENEMIES = {
     "demon_lord": {
         "name": "デーモンロード",
         "max_hp": 180,
-        "image": "/static/images/demon_lord.png",
+        "image": "/static/images/enemies/demon_lord.png",
         "role": "elite",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -671,7 +671,7 @@ ENEMIES = {
     "rabbit": {
         "name": "ラビット",
         "max_hp": 55,
-        "image": "/static/images/rabbit.png",
+        "image": "/static/images/enemies/rabbit.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -683,7 +683,7 @@ ENEMIES = {
     "horn_rabbit": {
         "name": "ホーンラビット",
         "max_hp": 60,
-        "image": "/static/images/horn_rabbit.png",
+        "image": "/static/images/enemies/horn_rabbit.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -695,7 +695,7 @@ ENEMIES = {
     "forest_snake": {
         "name": "フォレストスネーク",
         "max_hp": 60,
-        "image": "/static/images/forest_snake.png",
+        "image": "/static/images/enemies/forest_snake.png",
         "role": "small_fry",
         "weakness": ["fire"],
         "resist": [],
@@ -707,7 +707,7 @@ ENEMIES = {
     "cave_bat": {
         "name": "ケイブバット",
         "max_hp": 50,
-        "image": "/static/images/cave_bat.png",
+        "image": "/static/images/enemies/cave_bat.png",
         "role": "small_fry",
         "weakness": ["light"],
         "resist": ["dark"],
@@ -719,7 +719,7 @@ ENEMIES = {
     "baby_spider": {
         "name": "ベビースパイダー",
         "max_hp": 58,
-        "image": "/static/images/baby_spider.png",
+        "image": "/static/images/enemies/baby_spider.png",
         "role": "small_fry",
         "weakness": ["fire"],
         "resist": [],
@@ -731,7 +731,7 @@ ENEMIES = {
     "mud_frog": {
         "name": "マッドフロッグ",
         "max_hp": 65,
-        "image": "/static/images/mud_frog.png",
+        "image": "/static/images/enemies/mud_frog.png",
         "role": "small_fry",
         "weakness": ["thunder"],
         "resist": ["water"],
@@ -743,7 +743,7 @@ ENEMIES = {
     "wild_chicken": {
         "name": "ワイルドチキン",
         "max_hp": 55,
-        "image": "/static/images/wild_chicken.png",
+        "image": "/static/images/enemies/wild_chicken.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -755,7 +755,7 @@ ENEMIES = {
     "honey_bee": {
         "name": "ハニービー",
         "max_hp": 52,
-        "image": "/static/images/honey_bee.png",
+        "image": "/static/images/enemies/honey_bee.png",
         "role": "small_fry",
         "weakness": ["fire"],
         "resist": ["wind"],
@@ -767,7 +767,7 @@ ENEMIES = {
     "baby_treant": {
         "name": "ベビートレント",
         "max_hp": 70,
-        "image": "/static/images/baby_treant.png",
+        "image": "/static/images/enemies/baby_treant.png",
         "role": "small_fry",
         "weakness": ["fire"],
         "resist": [],
@@ -779,7 +779,7 @@ ENEMIES = {
     "rock_mole": {
         "name": "ロックモール",
         "max_hp": 68,
-        "image": "/static/images/rock_mole.png",
+        "image": "/static/images/enemies/rock_mole.png",
         "role": "small_fry",
         "weakness": ["thunder"],
         "resist": [],
@@ -791,7 +791,7 @@ ENEMIES = {
     "wild_boar": {
         "name": "ワイルドボア",
         "max_hp": 80,
-        "image": "/static/images/wild_boar.png",
+        "image": "/static/images/enemies/wild_boar.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -803,7 +803,7 @@ ENEMIES = {
     "gray_wolf": {
         "name": "グレイウルフ",
         "max_hp": 75,
-        "image": "/static/images/gray_wolf.png",
+        "image": "/static/images/enemies/gray_wolf.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -815,7 +815,7 @@ ENEMIES = {
     "giant_rat": {
         "name": "ジャイアントラット",
         "max_hp": 65,
-        "image": "/static/images/giant_rat.png",
+        "image": "/static/images/enemies/giant_rat.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -827,7 +827,7 @@ ENEMIES = {
     "mad_monkey": {
         "name": "マッドモンキー",
         "max_hp": 70,
-        "image": "/static/images/mad_monkey.png",
+        "image": "/static/images/enemies/mad_monkey.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -839,7 +839,7 @@ ENEMIES = {
     "hawk": {
         "name": "ホーク",
         "max_hp": 60,
-        "image": "/static/images/hawk.png",
+        "image": "/static/images/enemies/hawk.png",
         "role": "small_fry",
         "weakness": ["thunder"],
         "resist": ["wind"],
@@ -851,7 +851,7 @@ ENEMIES = {
     "sand_scorpion": {
         "name": "サンドスコーピオン",
         "max_hp": 90,
-        "image": "/static/images/sand_scorpion.png",
+        "image": "/static/images/enemies/sand_scorpion.png",
         "role": "small_fry",
         "weakness": ["water"],
         "resist": ["earth"],
@@ -864,7 +864,7 @@ ENEMIES = {
     "lizardman": {
         "name": "リザードマン",
         "max_hp": 120,
-        "image": "/static/images/lizardman.png",
+        "image": "/static/images/enemies/lizardman.png",
         "role": "small_fry",
         "weakness": ["ice"],
         "resist": [],
@@ -877,7 +877,7 @@ ENEMIES = {
     "needle_boar": {
         "name": "ニードルボア",
         "max_hp": 95,
-        "image": "/static/images/needle_boar.png",
+        "image": "/static/images/enemies/needle_boar.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -890,7 +890,7 @@ ENEMIES = {
     "raccoon": {
         "name": "ラクーン",
         "max_hp": 72,
-        "image": "/static/images/raccoon.png",
+        "image": "/static/images/enemies/raccoon.png",
         "role": "small_fry",
         "weakness": [],
         "resist": [],
@@ -902,7 +902,7 @@ ENEMIES = {
     "mountain_goat": {
         "name": "マウンテンゴート",
         "max_hp": 100,
-        "image": "/static/images/mountain_goat.png",
+        "image": "/static/images/enemies/mountain_goat.png",
         "role": "small_fry",
         "weakness": [],
         "resist": ["earth"],

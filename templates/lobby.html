@@ -542,10 +542,13 @@
 
 
 <audio id="tabidachiBgm" src="/static/sounds/tabidachi.mp3" loop></audio>
+<audio id="memberJoinSound" src="/static/sounds/member_join.mp3" preload="auto"></audio>
 
 <script>
 const tabidachiBgm = document.getElementById("tabidachiBgm");
 tabidachiBgm.volume = 0.35;
+const memberJoinSound = document.getElementById("memberJoinSound");
+memberJoinSound.volume = 0.7;
 
 function startTabidachiBgm() {
   tabidachiBgm.play().catch(() => {});
@@ -779,6 +782,8 @@ let canSelectEnemyRoom = false;
 let isStartingBattle = false;
 let developerSecretTapCount = 0;
 let developerSecretTimer = null;
+let knownLobbyPlayerNames = new Set();
+let hasInitializedLobbyPlayers = false;
 
 /* ===== F-1セクション：開発者入口3連打 ===== */
 function tapDeveloperSecret() {
@@ -869,10 +874,38 @@ async function updateLobby() {
   updateEnemyButtonPermission(data);
   syncEnemyRoomFromServer(data.selected_enemy_room || "random_zako_1");
   updateMyJob(data);
+  playMemberJoinSoundIfNeeded(data.players || []);
   renderPlayers(data.players, data.host_name, data.starter_name);
   updateStartButton(data);
   renderLobbyChat(data.chat_messages || [], data);
   renderLobbyKickVote(data);
+}
+
+function playMemberJoinSoundIfNeeded(players) {
+  const currentNames = new Set(
+    players
+      .map(p => p && p.name)
+      .filter(name => !!name)
+  );
+
+  if (!hasInitializedLobbyPlayers) {
+    knownLobbyPlayerNames = currentNames;
+    hasInitializedLobbyPlayers = true;
+    return;
+  }
+
+  const hasNewMember = Array.from(currentNames).some(name => {
+    return name !== myName && !knownLobbyPlayerNames.has(name);
+  });
+
+  knownLobbyPlayerNames = currentNames;
+
+  if (!hasNewMember) {
+    return;
+  }
+
+  memberJoinSound.currentTime = 0;
+  memberJoinSound.play().catch(() => {});
 }
 
 /* ===== Hセクション：状態テキスト表示 ===== */
